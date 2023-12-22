@@ -1,7 +1,9 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
+#include <flash_utils/flash_utils.h>
 
-const char* ssi_tags[] = {"batt","temp", "led"};
+
+const char* ssi_tags[] = {"batt","temp", "led", "ssid"};
 
 int battery_percent;
 
@@ -25,6 +27,11 @@ u16_t ssi_handler(int index, char *pcInsert, int iInsertLen)
         {
             const float LED = 3;
             printed = snprintf(pcInsert,iInsertLen, "%f", LED);
+        }
+        break;
+        case 3: 
+        {
+            printed = snprintf(pcInsert,iInsertLen, "%s", flash_content_r->ssid);
         }
         break;
         default:

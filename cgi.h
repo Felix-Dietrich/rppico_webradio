@@ -1,5 +1,6 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
+#include <flash_utils/flash_utils.h>
 
 const char* cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
@@ -20,21 +21,28 @@ const char* cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *p
 
 const char* cgi_form_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
+    flash_content_t flash_content_w;
     for(int i = 0; i < iNumParams; i++)
     {
         if(strcmp(pcParam[i], "SSID") == 0)
         {
             printf("SSID: %s\n", pcValue[i]);
+            strcpy(flash_content_w.ssid,pcValue[i]);
         }
         if(strcmp(pcParam[i], "password") == 0)
         {
             printf("password: %s\n", pcValue[i]);
+            strcpy(flash_content_w.password,pcValue[i]);
         }
     }
+    flash_write(&flash_content_w);
     
+   
 
     return "/index.shtml";
 }
+
+
 
 static const tCGI cgi_handlers[] = 
 {

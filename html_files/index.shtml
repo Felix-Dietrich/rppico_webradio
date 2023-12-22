@@ -58,7 +58,7 @@
 
     <form action="/submit-form" method="get">
         <label for="SSID">WIFI SSID:</label>
-        <input type="text" id="SSID" name="SSID" minlength="2" maxlength="32" required>
+        <input type="text" id="SSID" name="SSID" value="<!--#ssid-->" minlength="2" maxlength="32" required>
         <br>
         <label for="password">WIFI Passwort:</label>
         <input type="password" id="password" name="password" minlength="2" maxlength="32" required>

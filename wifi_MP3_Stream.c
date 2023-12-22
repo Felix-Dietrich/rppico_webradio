@@ -14,6 +14,7 @@
 #include "hardware/watchdog.h"
 #include "lwip/apps/httpd.h"
 #include "lwipopts.h"
+#include <flash_utils/flash_utils.h>
 #include "ssi.h"
 #include "cgi.h"
 #include "lwip/apps/mdns.h"
@@ -36,8 +37,8 @@
 char ssid0[] = "***REMOVED***";
 char pass0[] = "***REMOVED***";
 
-char ssid1[] = "***REMOVED***";
-char pass1[] = "***REMOVED***";
+//char ssid1[] = "***REMOVED***";
+//char pass1[] = "***REMOVED***";
 
 
 
@@ -47,7 +48,9 @@ const char stream1[] = "chmedia.streamabc.net/79-pilatus-mp3-192-4664468";      
 const char stream2[] = "stream.srg-ssr.ch/m/rsp/mp3_128";                         //radio swiss pop
 const char stream3[] = "stream.srg-ssr.ch/m/rsc_de/mp3_128";                      //swiss classic
 const char stream4[] = "chmedia.streamabc.net/79-rbern1-mp3-192-7860422";         //bern1
-const char stream5[] = "energybern.ice.infomaniak.ch/energybern-high.mp3";        //energy bern
+//const char stream5[] = "www.energybern.ice.infomaniak.ch/energybern-high.mp3";    //energy bern
+//const char stream5[] = "www.energybern.ice.infomaniak.ch/energybern-low.mp3";
+const char stream5[] = "185.74.70.51/energybern-high.mp3";
 const char stream6[] = "stream.srg-ssr.ch/m/drs1/mp3_128";                        //srf1
 const char stream7[] = "stream.srg-ssr.ch/m/rsj/mp3_128";                         //swiss jazz
 const char stream8[] = "streaming.swisstxt.ch/m/drs3/mp3_128";                    //srf3
@@ -144,7 +147,7 @@ void main_task(__unused void *params)
             //while (xQueueReceive(raw_audio_queue, &audio_buffer, 10));
             xQueueReset(compressed_audio_queue);
             xQueueReset(raw_audio_queue);
-            //volume = 0;
+            volume = 0;
             start_stream_mp3(streams[current_stream]);
             is_streaming = true;
             lastStream = current_stream;
@@ -164,17 +167,17 @@ void main_task(__unused void *params)
 
 void wifi_task(__unused void *params)
 {
-    static char* ssid = ssid0;
-    static char* pass = pass0;
+    char* ssid = flash_content_r->ssid;
+    char* pass = flash_content_r->password;
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
         {
-            puts("init failed");
+            //puts("init failed");
             sleep_ms(1000);
         }
     }
-    puts("initialised");
+    //puts("initialised");
     cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN,true);
     cyw43_arch_enable_sta_mode();
 
@@ -211,15 +214,17 @@ void wifi_task(__unused void *params)
                 break;
                 case CYW43_LINK_NONET:
                 printf("link no net\n");
-                if(ssid==ssid0)
+                if(ssid==flash_content_r->ssid && pass==flash_content_r->password)
                 {
-                    ssid=ssid1;
-                    pass=pass1;
+                    ssid=ssid0;
+                    pass=pass0;
                     cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 }
                 else
                 {  
-                    cyw43_arch_enable_ap_mode("deDietrich",NULL,CYW43_AUTH_WPA2_MIXED_PSK);
+                    cyw43_arch_deinit();
+                    cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND);
+                    cyw43_arch_enable_ap_mode("deDietrich","deDietrich",CYW43_AUTH_WPA2_MIXED_PSK);
                 }
                 break;
                 case CYW43_LINK_UP:
@@ -532,15 +537,28 @@ void http_server_task(__unused void *params)
            // mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
         }
         
-        vTaskDelay(1000);
+        vTaskDelay(5000);
+        mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
     }
     
 }
 
+/*
+void core1_task(__unused void *params)
+{
+
+}
+
+void core2_task(__unused void *params)
+{
+
+}
+*/
+
 void vLaunch( void) 
 { 
     //puts("task handle");
-    TaskHandle_t main_task_handle, audio_out_task_handle, audio_decode_task_handle, audio_process_task_handle, analog_in_task_handle, wifi_task_handle, http_server_task_handle;
+    TaskHandle_t main_task_handle, audio_out_task_handle, audio_decode_task_handle, audio_process_task_handle, analog_in_task_handle, wifi_task_handle, http_server_task_handle, core1_task_handle, core2_task_handle;
     //puts("queues");
     compressed_audio_queue = xQueueCreate(16,sizeof(http_buffer));
     raw_audio_queue = xQueueCreate(4,sizeof(buffer_pcm_t));
@@ -553,14 +571,19 @@ void vLaunch( void)
     xTaskCreate(analog_in_task,"Analog in Task",configMINIMAL_STACK_SIZE,NULL,2,&analog_in_task_handle);
     xTaskCreate(wifi_task,"Wifi Task",configMINIMAL_STACK_SIZE,NULL,2,&wifi_task_handle);
     xTaskCreate(http_server_task,"HTTP Server Task",configMINIMAL_STACK_SIZE,NULL,2,&http_server_task_handle);
+ //   xTaskCreate(core1_task,"Core1 Task",configMINIMAL_STACK_SIZE,NULL,2,&core1_task_handle);
+ //   xTaskCreate(core2_task,"Core2 Task",configMINIMAL_STACK_SIZE,NULL,2,&core2_task_handle);
     //puts("start");
 
 #if NO_SYS && configUSE_CORE_AFFINITY && configNUM_CORES > 1
     // we must bind the main task to one core (well at least while the init is called)
     // (note we only do this in NO_SYS mode, because cyw43_arch_freertos
     // takes care of it otherwise)
-    vTaskCoreAffinitySet(task, 1);
+    vTaskCoreAffinitySet(main_task_handle, 1);
 #endif
+//    vTaskCoreAffinitySet(core1_task_handle, 1<<0);
+//    vTaskCoreAffinitySet(core2_task_handle, 1<<1);
+
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
@@ -569,7 +592,7 @@ void vLaunch( void)
 
 void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err)
 {
-    is_streaming = false;
+    
     stop_stream = 0;
     puts("\n\n\n\nhttp_result");
     puts("----------------------------------------");
@@ -610,7 +633,9 @@ void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u
         break;
     }
     printf("http result=%d\n", srv_res);
-    puts("retry");    
+    vTaskDelay(500);
+    puts("retry");
+    is_streaming = false;    
 }
 
 err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len)
