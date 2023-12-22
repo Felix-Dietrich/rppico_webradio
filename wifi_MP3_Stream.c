@@ -33,7 +33,7 @@
 #define LADESCHLUSS_V 4.2
 #define ENTLADESCHLUSS_V 3.2
 
-#define FILTERSIZE 4
+#define FILTERSIZE 200
 
 
 const char ssid0[] = "dedietrich";
@@ -100,6 +100,7 @@ err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t 
 err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
 
 static void srv_txt(struct mdns_service *service, void *txt_userdata);
+void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume);
 
 int main()
 {
@@ -374,18 +375,10 @@ void audio_decode_task(__unused void *params)
 void audio_process_task(__unused void *params)
 {
     static buffer_pcm_t buffer_raw;
-    static int16_t buffer_raw_last[FILTERSIZE];
+    
     static buffer_pcm_t buffer_processed;
-    static int16_t filter[FILTERSIZE];
     static bool isPlaying = false;
     static bool wasPlaying = false;
-
-    for(int i = 0; i< FILTERSIZE; i++)
-    {
-        //filter[i] = (1<<14)/FILTERSIZE;
-        filter[i]=0;
-    }
-    filter[FILTERSIZE/2] = 1<<15;
 
     while(true)
     {
@@ -419,8 +412,6 @@ void audio_process_task(__unused void *params)
             for(int i = 0; i < buffer_raw.size; i++)
             {
                 buffer_raw.data[i] = (rand()%5000);
-                //buffer_raw.data[i]=i<<5;
-                //buffer_raw.data[i]=30000;
             }
             if((uxQueueSpacesAvailable(raw_audio_queue)==0) && (uxQueueSpacesAvailable(compressed_audio_queue)==0)) //warten, bis gesamte quque voll bevor playback beginnt. 
             {
@@ -440,36 +431,7 @@ void audio_process_task(__unused void *params)
             }
         }
        
-        buffer_processed.samplerate= buffer_raw.samplerate;
-        buffer_processed.size = buffer_raw.size;
-        int32_t volume3 = (1<<16)/volume;
-        int32_t volume2 = (1<<15)*volume;
-        //printf("volume: %f, volume2:%d, volume3:%d\n",volume,volume2,volume3);
-        int32_t processedData;
-        for(int i = 0; i < buffer_raw.size; i++)
-        {
-            processedData = 0;
-            for (size_t y = 0; y < FILTERSIZE; y++)
-            {
-                if(i+y<FILTERSIZE)
-                {
-                    processedData += buffer_raw_last[i+y]*filter[y];
-                }
-                else
-                {
-                    processedData += buffer_raw.data[i+y-FILTERSIZE]*filter[y];
-                }
-                
-            }
-            //buffer_processed.data[i] = processedData/volume3;
-            buffer_processed.data[i] = ((processedData>>16)*volume2)>>14; //ganzzahl multiplikation statt float ist deutlich schneller. eins zu wenig zurückschieben für lautere meaximale lautstärke
-        }
-
-        //copy last (Filtersize) samples
-        for(int i = 0; i< FILTERSIZE; i++)
-        {
-            buffer_raw_last[i] = buffer_raw.data[buffer_raw.size-FILTERSIZE+i];
-        }
+        equalizer(&buffer_raw,&buffer_processed,volume);
         xQueueSend(processed_audio_queue,&buffer_processed,portMAX_DELAY);
         
     }
@@ -774,4 +736,50 @@ static void srv_txt(struct mdns_service *service, void *txt_userdata)
 
   res = mdns_resp_add_service_txtitem(service, "path=/", 6);
   LWIP_ERROR("mdns add service txt failed\n", (res == ERR_OK), return);
+}
+
+
+void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
+{
+    static int16_t filter[FILTERSIZE];
+    static int16_t in_last[FILTERSIZE];
+    int32_t processedData;
+    int32_t volume2 = (1<<15)*volume;
+
+
+    for(int i = 0; i< FILTERSIZE; i++)
+    {
+        filter[i] = (1<<14)/FILTERSIZE;
+        //filter[i]=0;
+    }
+    filter[FILTERSIZE/2] = 1<<8;
+
+    out->samplerate = in->samplerate;
+    out->size = in->size;
+
+    
+    for(int i = 0; i < in->size; i++)
+    {
+        processedData = 0;
+        for (size_t y = 0; y < FILTERSIZE; y++)
+        {
+            if(i+y<FILTERSIZE)
+            {
+                processedData += in_last[i+y]*filter[y];
+            }
+            else
+            {
+                processedData += in->data[i+y-FILTERSIZE]*filter[y];
+            }
+            
+        }
+        out->data[i] = ((processedData>>16)*volume2)>>14; //ganzzahl multiplikation statt float ist deutlich schneller. eins zu wenig zurückschieben für lautere meaximale lautstärke
+    }
+
+    //copy last (Filtersize) samples
+    for(int i = 0; i< FILTERSIZE; i++)
+    {
+        in_last[i] = in->data[in->size-FILTERSIZE+i];
+    }
+
 }

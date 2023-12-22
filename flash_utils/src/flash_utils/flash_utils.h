@@ -8,6 +8,7 @@ typedef struct
     char ssid[33];
     char password[33];
     char sender[11][256];
+    float eq[10];
 }flash_content_t;
 
 extern uint32_t ADDR_PERSISTENT[];

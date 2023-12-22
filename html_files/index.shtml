@@ -12,13 +12,55 @@
             background-color: #f0f0f0;
         }
 
-        h1, h2, p {
+        h1, h2, p, form, button {
             margin: 10px;
+        }
+
+        label 
+        {
+            display: inline-block;
+            margin-bottom: 5px; /* Optional: Add some space between label and input */
+        }
+
+        input 
+        {
+            display: inline-block;
+            margin-bottom: 10px; /* Optional: Add some space between input fields */
         }
 
         button {
             padding: 10px;
             font-size: 16px;
+        }
+
+        form[action="/sender"] input[type="text"] 
+        {
+            width: 90%; /* You can adjust this value based on your preference */
+            max-width: 600px; /* Set a maximum width if needed */
+        }
+
+        .equalizer 
+        {
+            display: flex;
+            /*flex-direction: column-reverse; /* Reverse the order to make it vertical */
+            align-items: center;
+            height: 300px;
+            margin: 5px;
+            /*writing-mode: tb-rl;*/
+            position: relative;
+			
+        }
+
+        input[type="range"]
+        {
+        	flex-direction: column-reverse; /* Reverse the order to make it vertical */
+       		writing-mode: tb-rl;
+        }
+       
+        .slider 
+        {
+            height: 200px;
+            margin: 5px;
         }
 
         @media only screen and (max-width: 600px) {
@@ -49,12 +91,14 @@
     <h2>SSID und Passwort setzen</h2>
     <form action="/submit-form" method="get">
         <label for="SSID">WIFI SSID:</label>
+        <br>
         <input type="text" id="SSID" name="SSID" value="<!--#ssid-->" minlength="2" maxlength="32" required>
         <br>
         <label for="password">WIFI Passwort:</label>
+        <br>
         <input type="password" id="password" name="password" minlength="2" maxlength="32" required>
         <br>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Speichern">
     </form>
     <br>
     <h2>Sender definieren</h2>
@@ -85,6 +129,33 @@
         <br>
         <input type="submit" value="speichern">
     </form>
+    <br>
+    <h2>Equalizer</h2>
+    <form action="/equalizer" method="get">
+        <div class="equalizer">
+            <input type="range" class="slider" id="eq1" name="eq1" min="-20" max="20" step="any" value="<!--#eq1-->" list="markers" >
+            <input type="range" class="slider" id="eq2" name="eq2" min="-20" max="20" step="any" value="<!--#eq2-->" list="markers" >
+            <input type="range" class="slider" id="eq3" name="eq3" min="-20" max="20" step="any" value="<!--#eq3-->" list="markers">
+            <input type="range" class="slider" id="eq4" name="eq4" min="-20" max="20" step="any" value="<!--#eq4-->" list="markers">
+            <input type="range" class="slider" id="eq5" name="eq5" min="-20" max="20" step="any" value="<!--#eq5-->" list="markers">
+            <input type="range" class="slider" id="eq6" name="eq6" min="-20" max="20" step="any" value="<!--#eq6-->" list="markers">
+            <input type="range" class="slider" id="eq7" name="eq7" min="-20" max="20" step="any" value="<!--#eq7-->" list="markers">
+            <input type="range" class="slider" id="eq8" name="eq8" min="-20" max="20" step="any" value="<!--#eq8-->" list="markers">
+            <input type="range" class="slider" id="eq9" name="eq9" min="-20" max="20" step="any" value="<!--#eq9-->" list="markers">
+            <input type="range" class="slider" id="eq10" name="eq10" min="-20" max="20" step="any" value="<!--#eq10-->" list="markers">
+        </div>
+        <br>
+        <input type="submit" value="speichern">
+    </form>
+    <datalist id="markers">
+        <option value="0"></option>
+        <option value="6"></option>
+        <option value="12"></option>
+        <option value="18"></option>
+        <option value="-6"></option>
+        <option value="-12"></option>
+        <option value="-18"></option>
+    </datalist>
     <br>
     <a href="/led.cgi?led=1"><button>LED ON</button></a>
     <a href="/led.cgi?led=0"><button>LED OFF</button></a>

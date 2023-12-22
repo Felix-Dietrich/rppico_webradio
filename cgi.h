@@ -96,25 +96,7 @@ const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char
         }
        
     }
-    /*for(int i = 0; i < LWIP_ARRAYSIZE(flash_content_w.sender); i++)  //alle %2F durch / ersetzen
-    {
-        int offset = 0;
-        for(int zeichen=0; (zeichen+offset) < 255; zeichen++)
-        {
-            if(flash_content_w.sender[i][zeichen] == '%')
-            {
-                offset+=2;
-                flash_content_w.sender[i][zeichen] = '/';
-                zeichen++;
-            }
-            flash_content_w.sender[i][zeichen] = flash_content_w.sender[i][zeichen+offset];
-            if(flash_content_w.sender[i][zeichen] == 0 || flash_content_w.sender[i][zeichen] == 0xff)
-            {
-                break;
-            }
-        }
-    }
-    */
+   
    for(int i = 0; i < LWIP_ARRAYSIZE(flash_content_w.sender); i++)  //alle %2F durch / ersetzen
     {
         char *pos;
@@ -130,6 +112,59 @@ const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char
     return "/index.shtml";
 }
 
+
+const char* cgi_equalizer_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
+{
+    flash_content_t flash_content_w;
+    flash_content_w = *flash_content_r;
+    for(int i = 0; i < iNumParams; i++)
+    {
+        printf("%s=%s\n",pcParam[i],pcValue[i]);
+        if(strcmp(pcParam[i], "eq1") == 0)
+        {
+            flash_content_w.eq[0] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq2") == 0)
+        {
+            flash_content_w.eq[1] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq3") == 0)
+        {
+            flash_content_w.eq[2] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq4") == 0)
+        {
+            flash_content_w.eq[3] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq5") == 0)
+        {
+            flash_content_w.eq[4] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq6") == 0)
+        {
+            flash_content_w.eq[5] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq7") == 0)
+        {
+            flash_content_w.eq[6] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq8") == 0)
+        {
+            flash_content_w.eq[7] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq9") == 0)
+        {
+            flash_content_w.eq[8] = (float)atof(pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "eq10") == 0)
+        {
+            flash_content_w.eq[9] = (float)atof(pcValue[i]);
+        }
+    }
+    flash_write(&flash_content_w);
+    return "/index.shtml";
+}
+
 static const tCGI cgi_handlers[] = 
 {
      {
@@ -140,6 +175,9 @@ static const tCGI cgi_handlers[] =
      },
      {
         "/sender", cgi_sender_handler
+     },
+     {
+        "/equalizer", cgi_equalizer_handler
      },
 };
 
