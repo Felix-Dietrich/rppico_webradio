@@ -1,0 +1,3 @@
+[submodule "picomp3lib"]
+	path = picomp3lib
+	url = https://github.com/ikjordan/picomp3lib.git
