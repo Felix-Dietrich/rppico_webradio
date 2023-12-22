@@ -11,7 +11,7 @@
 //#define SAMPLE_FREQ 48000/2
 
 void audio_i2s_api_init(void);
-uint8_t audio_i2s_api_write(int16_t *buffer, int samplecount);
+uint8_t audio_i2s_api_write(int16_t *buffer, int sample_count, int sample_freq);
 
-
+void update_pio_frequency(uint32_t sample_freq);
 #endif

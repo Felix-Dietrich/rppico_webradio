@@ -1,11 +1,11 @@
 
 #include "audio_i2s_api.h"
 #include "pico/audio_i2s.h"
+#include "audio_i2s_api.h"
 #include "hardware/gpio.h"
 #include "string.h"
 
 #define SAMPLES_PER_BUFFER 1500
-
 
 typedef struct audio_buffer_pool audio_buffer_pool_t;
 audio_buffer_pool_t* ap;
@@ -58,8 +58,9 @@ void audio_i2s_api_init(void)
 }
 
 
-uint8_t audio_i2s_api_write(int16_t *buffer, int sample_count)
+uint8_t audio_i2s_api_write(int16_t *buffer, int sample_count, int sample_freq)
 {
+    static int ls_sample_freq = SAMPLE_FREQ;
     audio_buffer_t *audio_buffer = take_audio_buffer(ap, false);
     if(audio_buffer == NULL)
     {
@@ -74,5 +75,12 @@ uint8_t audio_i2s_api_write(int16_t *buffer, int sample_count)
     memcpy(samples,buffer, sample_count*2);
     audio_buffer->sample_count = sample_count;
     give_audio_buffer(ap, audio_buffer);
+
+    if(ls_sample_freq!=sample_freq)
+    {
+        ls_sample_freq=sample_freq;
+     //   printf("samplerate=%d\n",ls_sample_freq);
+        update_pio_frequency(ls_sample_freq);
+    }
     return 0;
 }

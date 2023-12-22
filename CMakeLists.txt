@@ -60,6 +60,7 @@ target_link_libraries(wifi_MP3_Stream
         FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
         audioI2SAPI
         picomp3lib
+        hardware_adc
         )
  
 
