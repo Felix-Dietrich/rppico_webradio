@@ -1,1 +1,4 @@
 
+[submodule "picomp3lib"]
+	path = picomp3lib
+	url = git@github.com:Felix-Dietrich/picomp3lib.git
