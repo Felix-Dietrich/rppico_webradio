@@ -12,6 +12,7 @@ set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Ke
 
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
+
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
@@ -25,6 +26,13 @@ project(wifi_MP3_Stream C CXX ASM)
 
 add_subdirectory(audioI2SAPI)
 add_subdirectory(picomp3lib)
+
+ #generate c from html for web server
+ message("generate c from html for web server")
+ execute_process(COMMAND
+    python3 makefsdata.py 
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    )
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -50,6 +58,11 @@ target_include_directories(wifi_MP3_Stream PRIVATE
   
 )
 
+target_compile_definitions(wifi_MP3_Stream PRIVATE
+  CYW43_HOST_NAME="deDietrich"
+)
+
+
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 # Add any user requested libraries
@@ -57,12 +70,14 @@ target_link_libraries(wifi_MP3_Stream
         #pico_cyw43_arch_lwip_threadsafe_background
         pico_cyw43_arch_lwip_sys_freertos
         pico_lwip_http
+        pico_lwip_mdns
         FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
         audioI2SAPI
         picomp3lib
         hardware_adc
         )
  
+pico_set_linker_script(wifi_MP3_Stream ${CMAKE_SOURCE_DIR}/memmap_reserved_flash.ld)
 
 pico_add_extra_outputs(wifi_MP3_Stream)
 

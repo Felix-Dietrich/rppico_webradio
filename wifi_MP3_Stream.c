@@ -12,6 +12,11 @@
 #include "hardware/adc.h"
 #include "hardware/vreg.h"
 #include "hardware/watchdog.h"
+#include "lwip/apps/httpd.h"
+#include "lwipopts.h"
+#include "ssi.h"
+#include "cgi.h"
+#include "lwip/apps/mdns.h"
 
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -22,13 +27,20 @@
 #define MAX_MP3_FRAME_SIZE 1441
 #define BUF_LEN (TCP_MSS + MAX_MP3_FRAME_SIZE)
 
-#define FILTERSIZE 64
+#define LADESCHLUSS_V 4.2
+#define ENTLADESCHLUSS_V 3.2
 
-//char ssid[] = "***REMOVED***";
-//char pass[] = "***REMOVED***";
+#define FILTERSIZE 4
 
-char ssid[] = "***REMOVED***";
-char pass[] = "***REMOVED***";
+
+char ssid0[] = "***REMOVED***";
+char pass0[] = "***REMOVED***";
+
+char ssid1[] = "***REMOVED***";
+char pass1[] = "***REMOVED***";
+
+
+
 
 const char stream0[] = "vintageradio.ice.infomaniak.ch/vintageradio-high.mp3";    //vintagereadio
 const char stream1[] = "chmedia.streamabc.net/79-pilatus-mp3-192-4664468";        //radio Pilatus
@@ -80,11 +92,12 @@ void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u
 err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len);
 err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
 
+static void srv_txt(struct mdns_service *service, void *txt_userdata);
 
 int main()
 {
     vreg_set_voltage(VREG_VOLTAGE_1_20);
-    set_sys_clock_khz(200000,true);
+    set_sys_clock_khz(250000,true);
     stdio_init_all();
      const char *rtos_name;
 #if ( portSUPPORT_SMP == 1 )
@@ -151,6 +164,8 @@ void main_task(__unused void *params)
 
 void wifi_task(__unused void *params)
 {
+    static char* ssid = ssid0;
+    static char* pass = pass0;
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
@@ -164,7 +179,6 @@ void wifi_task(__unused void *params)
     cyw43_arch_enable_sta_mode();
 
     cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-
     
     while (true)
     {   
@@ -197,11 +211,21 @@ void wifi_task(__unused void *params)
                 break;
                 case CYW43_LINK_NONET:
                 printf("link no net\n");
-                cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                if(ssid==ssid0)
+                {
+                    ssid=ssid1;
+                    pass=pass1;
+                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                }
+                else
+                {  
+                    cyw43_arch_enable_ap_mode("deDietrich",NULL,CYW43_AUTH_WPA2_MIXED_PSK);
+                }
                 break;
                 case CYW43_LINK_UP:
-                printf("link up\n");
+                printf("link up: %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
                 is_connected = true;
+                
                 break;
 
             }
@@ -312,16 +336,36 @@ void audio_process_task(__unused void *params)
     static int16_t buffer_raw_last[FILTERSIZE];
     static buffer_pcm_t buffer_processed;
     static int16_t filter[FILTERSIZE];
+    static bool isPlaying = false;
     static bool wasPlaying = false;
 
     for(int i = 0; i< FILTERSIZE; i++)
     {
-        filter[i] = (1<<15)/FILTERSIZE;
+        //filter[i] = (1<<14)/FILTERSIZE;
+        filter[i]=0;
     }
+    filter[FILTERSIZE/2] = 1<<15;
 
     while(true)
     {
-        if(xQueueReceive(raw_audio_queue,&buffer_raw,1)==pdFALSE)
+     /* Freie Plätze der Queue anzeigen
+        int raw= uxQueueSpacesAvailable(raw_audio_queue);
+        int compressed = uxQueueSpacesAvailable(compressed_audio_queue);
+        static int last_compressed;
+        static int last_raw;
+
+        if(last_raw != raw)
+        {
+            last_raw = raw;
+            printf("raw: %d\n",raw);
+        }
+        if(last_compressed != compressed)
+        {
+            last_compressed=compressed;
+            printf("compressed %d\n", compressed);
+        }
+        */
+        if(!isPlaying || xQueueReceive(raw_audio_queue,&buffer_raw,40)==pdFALSE)
         {
             buffer_raw.size=1152;
             buffer_raw.samplerate=44100;
@@ -333,9 +377,17 @@ void audio_process_task(__unused void *params)
             
             for(int i = 0; i < buffer_raw.size; i++)
             {
-                buffer_raw.data[i] = (rand()%10000);
+                buffer_raw.data[i] = (rand()%5000);
                 //buffer_raw.data[i]=i<<5;
                 //buffer_raw.data[i]=30000;
+            }
+            if((uxQueueSpacesAvailable(raw_audio_queue)==0) && (uxQueueSpacesAvailable(compressed_audio_queue)==0)) //warten, bis gesamte quque voll bevor playback beginnt. 
+            {
+                isPlaying = true;
+            }
+            else
+            {
+                isPlaying = false;
             }
         }
         else
@@ -350,6 +402,8 @@ void audio_process_task(__unused void *params)
         buffer_processed.samplerate= buffer_raw.samplerate;
         buffer_processed.size = buffer_raw.size;
         int32_t volume3 = (1<<16)/volume;
+        int32_t volume2 = (1<<15)*volume;
+        //printf("volume: %f, volume2:%d, volume3:%d\n",volume,volume2,volume3);
         int32_t processedData;
         for(int i = 0; i < buffer_raw.size; i++)
         {
@@ -366,9 +420,8 @@ void audio_process_task(__unused void *params)
                 }
                 
             }
-            
-            buffer_processed.data[i] = processedData/volume3; //Ganzzahl division ist schneller als float multiplikation
-            //buffer_processed.data[i] = buffer_raw.data[i] * volume;
+            //buffer_processed.data[i] = processedData/volume3;
+            buffer_processed.data[i] = ((processedData>>16)*volume2)>>14; //ganzzahl multiplikation statt float ist deutlich schneller. eins zu wenig zurückschieben für lautere meaximale lautstärke
         }
 
         //copy last (Filtersize) samples
@@ -387,8 +440,8 @@ void audio_out_task(__unused void *params)
     audio_i2s_api_init();
     uint8_t status = 0;
     static buffer_pcm_t buffer_wav;
-    buffer_wav.size = 100;
-    buffer_wav.samplerate = 48000;
+    buffer_wav.size = 0;
+    buffer_wav.samplerate = 0;
 
     while (true)
     {
@@ -430,17 +483,28 @@ void analog_in_task(__unused void *params)
         uint16_t ADCresult0 = adc_read();
         adc_select_input(1);
         uint16_t ADCresult1 = adc_read();
+        adc_select_input(2);
+        uint16_t ADCresult2 = adc_read();
+
+        float battery_v = ADCresult2*3.3*2/4096;
+        battery_percent = (battery_v-ENTLADESCHLUSS_V)*100.0/(LADESCHLUSS_V-ENTLADESCHLUSS_V);
+        if(battery_percent<0)
+        {
+            battery_percent = 0;
+        }
         volume = volume*0.95+(float)ADCresult0/4096*0.05;
 
         const int steps= 11;
         const int ADCResolution = 4096;
-        const float overlap = 0.5;
-        const int divider = ADCResolution/steps+1;
+        const float overlap = 0.25;
+        const int divider = ADCResolution/(steps-1);
 
-        if(abs(((current_stream*divider)+divider/2)-ADCresult1)>(2*divider*overlap))
+        if(abs((current_stream*divider)-ADCresult1)>(divider/2+divider*overlap))
         {
-            current_stream = ADCresult1/divider;
-            //printf("ADC selection: %d\n", ADCselection);
+            //printf("last stream: %d\n",current_stream);
+            //printf("adc-Result: %d\n",ADCresult1);
+            current_stream = (ADCresult1+divider/2)/divider;
+            //printf("ADC selection: %d\n\n", current_stream);
         }
         gpio_put(11,0);
         vTaskDelay(20);
@@ -448,23 +512,48 @@ void analog_in_task(__unused void *params)
 
 }
 
+void http_server_task(__unused void *params)
+{
+    while(!is_connected)
+    {
+        vTaskDelay(100);
+    }
+    httpd_init();
+    ssi_init();
+    cgi_init();
+    mdns_resp_init();
+    mdns_resp_add_netif(&cyw43_state.netif[CYW43_ITF_STA], "deDietrich");
+    mdns_resp_add_service(&cyw43_state.netif[CYW43_ITF_STA], "picow_freertos_httpd", "_http", DNSSD_PROTO_TCP, 80, srv_txt, NULL);
+    while (true)
+    {
+        static bool wasConnected = true;
+        if(is_connected && wasConnected == false)
+        {
+           // mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
+        }
+        
+        vTaskDelay(1000);
+    }
+    
+}
+
 void vLaunch( void) 
 { 
-    puts("task handle");
-    TaskHandle_t main_task_handle, audio_out_task_handle, audio_decode_task_handle, audio_process_task_handle, analog_in_task_handle, wifi_task_handle;
-    puts("queues");
-    compressed_audio_queue = xQueueCreate(8,sizeof(http_buffer));
-    raw_audio_queue = xQueueCreate(2,sizeof(buffer_pcm_t));
-    processed_audio_queue = xQueueCreate(2,sizeof(buffer_pcm_t));
-    puts("Tasks");
-    xTaskCreate(main_task, "Main Task", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, &main_task_handle);
-    xTaskCreate(audio_out_task,"Audio out Task",configMINIMAL_STACK_SIZE,NULL,tskIDLE_PRIORITY+1,&audio_out_task_handle);
-    xTaskCreate(audio_decode_task,"Audio decode Task",configMINIMAL_STACK_SIZE,NULL,tskIDLE_PRIORITY+1,&audio_decode_task_handle);
-    xTaskCreate(audio_process_task,"Audio process Task",configMINIMAL_STACK_SIZE,NULL,tskIDLE_PRIORITY+1,&audio_process_task_handle);
-    xTaskCreate(analog_in_task,"Analog in Task",configMINIMAL_STACK_SIZE,NULL,tskIDLE_PRIORITY+1,&analog_in_task_handle);
-    xTaskCreate(wifi_task,"Wifi Task",configMINIMAL_STACK_SIZE,NULL,tskIDLE_PRIORITY+1,&wifi_task_handle);
-
-    puts("start");
+    //puts("task handle");
+    TaskHandle_t main_task_handle, audio_out_task_handle, audio_decode_task_handle, audio_process_task_handle, analog_in_task_handle, wifi_task_handle, http_server_task_handle;
+    //puts("queues");
+    compressed_audio_queue = xQueueCreate(16,sizeof(http_buffer));
+    raw_audio_queue = xQueueCreate(4,sizeof(buffer_pcm_t));
+    processed_audio_queue = xQueueCreate(4,sizeof(buffer_pcm_t));
+    //puts("Tasks");
+    xTaskCreate(main_task, "Main Task", configMINIMAL_STACK_SIZE, NULL, 2, &main_task_handle);
+    xTaskCreate(audio_out_task,"Audio out Task",configMINIMAL_STACK_SIZE,NULL,2,&audio_out_task_handle);
+    xTaskCreate(audio_decode_task,"Audio decode Task",configMINIMAL_STACK_SIZE,NULL,2,&audio_decode_task_handle);
+    xTaskCreate(audio_process_task,"Audio process Task",configMINIMAL_STACK_SIZE,NULL,2,&audio_process_task_handle);
+    xTaskCreate(analog_in_task,"Analog in Task",configMINIMAL_STACK_SIZE,NULL,2,&analog_in_task_handle);
+    xTaskCreate(wifi_task,"Wifi Task",configMINIMAL_STACK_SIZE,NULL,2,&wifi_task_handle);
+    xTaskCreate(http_server_task,"HTTP Server Task",configMINIMAL_STACK_SIZE,NULL,2,&http_server_task_handle);
+    //puts("start");
 
 #if NO_SYS && configUSE_CORE_AFFINITY && configNUM_CORES > 1
     // we must bind the main task to one core (well at least while the init is called)
@@ -572,7 +661,7 @@ err_t http_body(void *arg, struct tcp_pcb *conn, struct pbuf *p, err_t err)
     {    
         if(p->tot_len > TCP_MSS)
         {
-            puts("Err: too big to handle\n");
+            //puts("Err: too big to handle\n");
             tcp_recved(conn,p->tot_len);
             pbuf_free(p);
             return ERR_OK;
@@ -610,4 +699,13 @@ void start_stream_mp3(const char* stream_link)
     settings.headers_done_fn = http_header;
     err_t err = httpc_get_file_dns(server_name, port, uri, &settings, http_body, NULL, NULL);
 //    printf("http_request status %d \n", err);
+}
+
+static void srv_txt(struct mdns_service *service, void *txt_userdata)
+{
+  err_t res;
+  LWIP_UNUSED_ARG(txt_userdata);
+
+  res = mdns_resp_add_service_txtitem(service, "path=/", 6);
+  LWIP_ERROR("mdns add service txt failed\n", (res == ERR_OK), return);
 }
