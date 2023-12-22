@@ -16,10 +16,11 @@
 #define PORT_DNS_SERVER 53
 #define DUMP_DATA 0
 
-//#define DEBUG_printf(...)
-#define DEBUG_printf printf
+#define DEBUG_printf(...)
+//#define DEBUG_printf printf
 
-#define ERROR_printf printf
+#define ERROR_printf(...)
+//#define ERROR_printf printf
 
 typedef struct dns_header_t_ {
     uint16_t id;

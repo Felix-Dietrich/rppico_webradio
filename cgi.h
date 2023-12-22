@@ -25,14 +25,15 @@ const char* cgi_form_handler(int iIndex, int iNumParams, char *pcParam[], char *
     flash_content_w = *flash_content_r;
     for(int i = 0; i < iNumParams; i++)
     {
+        depercent(pcValue[i]);
         if(strcmp(pcParam[i], "SSID") == 0)
         {
-           // printf("SSID: %s\n", pcValue[i]);
+            printf("SSID: %s\n", pcValue[i]);
             strcpy(flash_content_w.ssid,pcValue[i]);
         }
         if(strcmp(pcParam[i], "password") == 0)
         {
-            //printf("password: %s\n", pcValue[i]);
+            printf("password: %s\n", pcValue[i]);
             strcpy(flash_content_w.password,pcValue[i]);
         }
     }
@@ -50,6 +51,7 @@ const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char
     for(int i = 0; i < iNumParams; i++)
     {
         //printf("%s=%s\n",pcParam[i],pcValue[i]);
+        depercent(pcValue[i]);
         if(strcmp(pcParam[i], "sender1") == 0)
         {
             strcpy(flash_content_w.sender[0],pcValue[i]);
@@ -94,21 +96,9 @@ const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char
         {
             strcpy(flash_content_w.sender[10],pcValue[i]);
         }
-       
-    }
-   
-   for(int i = 0; i < LWIP_ARRAYSIZE(flash_content_w.sender); i++)  //alle %2F durch / ersetzen
-    {
-        char *pos;
-        while ((pos = strstr(flash_content_w.sender[i], "%2F")) != NULL) {
-            memmove(pos + 1, pos + 3, strlen(pos + 2));
-            *pos = '/';
-        }
     }
     flash_write(&flash_content_w);
     
-   
-
     return "/index.shtml";
 }
 
@@ -185,4 +175,54 @@ void cgi_init(void)
 {
     http_set_cgi_handlers(cgi_handlers,LWIP_ARRAYSIZE(cgi_handlers));
 
+}
+
+/*
+* prozentschreibweise der URL-Codierung in ascii umwandeln
+* This function processes a string by replacing occurrences of "%xx" substrings with
+* the corresponding ASCII characters, where "xx" represents a two-digit hexadecimal
+* number.
+*/
+void depercent(char* string)
+{
+    char* endpos = string+strlen(string);
+    while(string < endpos) 
+    {
+        if(*string == '+')
+        {
+            *string = ' ';
+        }
+        if(*string == '%')
+        {
+            if(string[1] >= 'a')
+            {
+                string[1] -= 'a'-10;
+            }
+            else if(string[1] >= 'A')
+            {
+                string[1] -= 'A'-10;
+            }
+            else if(string[1] >= '0')
+            {
+                string[1] -= '0';
+            }
+            
+            if(string[2] >= 'a')
+            {
+                string[2] -= 'a'-10;
+            }
+            else if(string[2] >= 'A')
+            {
+                string[2] -= 'A'-10;
+            }
+            else if(string[2] >= '0')
+            {
+                string[2] -= '0';
+            }
+            printf("%x,%x\n",string[1],string[2]);
+            *string = (0x10 * string[1] + string[2]);
+            memmove(string+1, string+3, endpos-(string+2));
+        }
+        string++;
+    }
 }
