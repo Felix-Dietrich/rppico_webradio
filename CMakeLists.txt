@@ -27,6 +27,8 @@ project(wifi_MP3_Stream C CXX ASM)
 add_subdirectory(audioI2SAPI)
 add_subdirectory(flash_utils)
 add_subdirectory(picomp3lib)
+add_subdirectory(dnsserver)
+add_subdirectory(dhcpserver)
 
  #generate c from html for web server
  message("generate c from html for web server")
@@ -77,6 +79,8 @@ target_link_libraries(wifi_MP3_Stream
         picomp3lib
         hardware_adc
         flash_utils
+        dnsserver
+        dhcpserver
         )
  
 pico_set_linker_script(wifi_MP3_Stream ${CMAKE_SOURCE_DIR}/memmap_reserved_flash.ld)

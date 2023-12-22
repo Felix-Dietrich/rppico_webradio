@@ -22,6 +22,7 @@ const char* cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *p
 const char* cgi_form_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
     flash_content_t flash_content_w;
+    flash_content_w = *flash_content_r;
     for(int i = 0; i < iNumParams; i++)
     {
         if(strcmp(pcParam[i], "SSID") == 0)
@@ -42,7 +43,92 @@ const char* cgi_form_handler(int iIndex, int iNumParams, char *pcParam[], char *
     return "/index.shtml";
 }
 
+const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
+{
+    flash_content_t flash_content_w;
+    flash_content_w = *flash_content_r;
+    for(int i = 0; i < iNumParams; i++)
+    {
+        printf("%s=%s\n",pcParam[i],pcValue[i]);
+        if(strcmp(pcParam[i], "sender1") == 0)
+        {
+            strcpy(flash_content_w.sender[0],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender2") == 0)
+        {
+            strcpy(flash_content_w.sender[1],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender3") == 0)
+        {
+            strcpy(flash_content_w.sender[2],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender4") == 0)
+        {
+            strcpy(flash_content_w.sender[3],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender5") == 0)
+        {
+            strcpy(flash_content_w.sender[4],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender6") == 0)
+        {
+            strcpy(flash_content_w.sender[5],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender7") == 0)
+        {
+            strcpy(flash_content_w.sender[6],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender8") == 0)
+        {
+            strcpy(flash_content_w.sender[7],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender9") == 0)
+        {
+            strcpy(flash_content_w.sender[8],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender10") == 0)
+        {
+            strcpy(flash_content_w.sender[9],pcValue[i]);
+        }
+        if(strcmp(pcParam[i], "sender11") == 0)
+        {
+            strcpy(flash_content_w.sender[10],pcValue[i]);
+        }
+       
+    }
+    /*for(int i = 0; i < LWIP_ARRAYSIZE(flash_content_w.sender); i++)  //alle %2F durch / ersetzen
+    {
+        int offset = 0;
+        for(int zeichen=0; (zeichen+offset) < 255; zeichen++)
+        {
+            if(flash_content_w.sender[i][zeichen] == '%')
+            {
+                offset+=2;
+                flash_content_w.sender[i][zeichen] = '/';
+                zeichen++;
+            }
+            flash_content_w.sender[i][zeichen] = flash_content_w.sender[i][zeichen+offset];
+            if(flash_content_w.sender[i][zeichen] == 0 || flash_content_w.sender[i][zeichen] == 0xff)
+            {
+                break;
+            }
+        }
+    }
+    */
+   for(int i = 0; i < LWIP_ARRAYSIZE(flash_content_w.sender); i++)  //alle %2F durch / ersetzen
+    {
+        char *pos;
+        while ((pos = strstr(flash_content_w.sender[i], "%2F")) != NULL) {
+            memmove(pos + 1, pos + 3, strlen(pos + 2));
+            *pos = '/';
+        }
+    }
+    flash_write(&flash_content_w);
+    
+   
 
+    return "/index.shtml";
+}
 
 static const tCGI cgi_handlers[] = 
 {
@@ -52,10 +138,13 @@ static const tCGI cgi_handlers[] =
      {
         "/submit-form", cgi_form_handler
      },
+     {
+        "/sender", cgi_sender_handler
+     },
 };
 
 void cgi_init(void)
 {
-    http_set_cgi_handlers(cgi_handlers,2);
+    http_set_cgi_handlers(cgi_handlers,LWIP_ARRAYSIZE(cgi_handlers));
 
 }

@@ -18,6 +18,8 @@
 #include "ssi.h"
 #include "cgi.h"
 #include "lwip/apps/mdns.h"
+#include <dhcpserver/dhcpserver.h>
+#include <dnsserver/dnsserver.h>
 
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -34,15 +36,10 @@
 #define FILTERSIZE 4
 
 
-char ssid0[] = "***REMOVED***";
-char pass0[] = "***REMOVED***";
+const char ssid0[] = "dedietrich";
+const char pass0[] = "dedietrich";
 
-//char ssid1[] = "***REMOVED***";
-//char pass1[] = "***REMOVED***";
-
-
-
-
+/*
 const char stream0[] = "vintageradio.ice.infomaniak.ch/vintageradio-high.mp3";    //vintagereadio
 const char stream1[] = "chmedia.streamabc.net/79-pilatus-mp3-192-4664468";        //radio Pilatus
 const char stream2[] = "stream.srg-ssr.ch/m/rsp/mp3_128";                         //radio swiss pop
@@ -58,7 +55,7 @@ const char stream9[] = "chmedia.streamabc.net/79-ffm-mp3-192-2470075";          
 const char stream10[] ="chmedia.streamabc.net/79-virginrockch-mp3-192-2872456";   //virgin radio
 
 const char* streams[] = {stream0,stream1,stream2,stream3,stream4,stream5,stream6,stream7,stream8,stream9,stream10};
-
+*/
 int current_stream = 0;
 
 typedef struct 
@@ -80,12 +77,19 @@ float volume = 0;
 bool stop_stream = false;
 bool is_streaming = false;
 bool is_connected = false;
+bool is_connected_ap = false;
 
 buffer_t http_buffer;
 QueueHandle_t compressed_audio_queue;
 QueueHandle_t raw_audio_queue;
 QueueHandle_t processed_audio_queue;
 
+
+typedef struct TCP_SERVER_T_ {
+    struct tcp_pcb *server_pcb;
+    bool complete;
+    ip_addr_t gw;
+} TCP_SERVER_T;
 
 void vLaunch( void);
 
@@ -143,13 +147,15 @@ void main_task(__unused void *params)
         vTaskDelay(100);
         if(is_connected && !is_streaming)
         {
-            //while (xQueueReceive(compressed_audio_queue, &http_buffer, 300));            
-            //while (xQueueReceive(raw_audio_queue, &audio_buffer, 10));
-            xQueueReset(compressed_audio_queue);
-            xQueueReset(raw_audio_queue);
-            volume = 0;
-            start_stream_mp3(streams[current_stream]);
-            is_streaming = true;
+            //start_stream_mp3(streams[current_stream]);
+            if ((flash_content_r->sender[current_stream][0] >= 0x30) && (flash_content_r->sender[current_stream][0] <= 0x7E))
+            {
+                xQueueReset(compressed_audio_queue);
+                xQueueReset(raw_audio_queue);
+                start_stream_mp3(flash_content_r->sender[current_stream]);
+                is_streaming = true;
+                volume = 0;
+            }
             lastStream = current_stream;
         }
         if(is_streaming && !stop_stream)
@@ -167,8 +173,8 @@ void main_task(__unused void *params)
 
 void wifi_task(__unused void *params)
 {
-    char* ssid = flash_content_r->ssid;
-    char* pass = flash_content_r->password;
+    const char* ssid = flash_content_r->ssid;
+    const char* pass = flash_content_r->password;
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
@@ -195,37 +201,31 @@ void wifi_task(__unused void *params)
             {
                 case CYW43_LINK_BADAUTH:
                 printf("badauth\n");
+                is_connected = false;
                 cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 break;
                 case CYW43_LINK_DOWN:
                 printf("link down\n");
+                is_connected = false;
                 cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 break;
                 case CYW43_LINK_FAIL:
                 printf("link fail\n");
+                is_connected = false;
                 cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 break;
                 case CYW43_LINK_JOIN:
                 printf("link join\n");
+                is_connected = false;
                 break;
                 case CYW43_LINK_NOIP:
                 printf("link no ip\n");
+                is_connected = false;
                 cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 break;
                 case CYW43_LINK_NONET:
                 printf("link no net\n");
-                if(ssid==flash_content_r->ssid && pass==flash_content_r->password)
-                {
-                    ssid=ssid0;
-                    pass=pass0;
-                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-                }
-                else
-                {  
-                    cyw43_arch_deinit();
-                    cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND);
-                    cyw43_arch_enable_ap_mode("deDietrich","deDietrich",CYW43_AUTH_WPA2_MIXED_PSK);
-                }
+                is_connected = false;
                 break;
                 case CYW43_LINK_UP:
                 printf("link up: %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
@@ -234,6 +234,42 @@ void wifi_task(__unused void *params)
                 break;
 
             }
+
+            if((new_status == CYW43_LINK_NONET) || (new_status == CYW43_LINK_BADAUTH))
+            {
+                if(ssid==flash_content_r->ssid && pass==flash_content_r->password)
+                {
+                    ssid=ssid0;
+                    pass=pass0;
+                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                }
+                else
+                {  
+                    TCP_SERVER_T *state = calloc(1, sizeof(TCP_SERVER_T));
+                    cyw43_arch_enable_ap_mode("deDietrich",NULL,CYW43_AUTH_WPA2_MIXED_PSK);
+
+                    ip4_addr_t mask;
+                    IP4_ADDR(ip_2_ip4(&state->gw), 192, 168, 4, 1);
+                    IP4_ADDR(ip_2_ip4(&mask), 255, 255, 255, 0);
+
+                    // Start the dhcp server
+                    dhcp_server_t dhcp_server;
+                    dhcp_server_init(&dhcp_server, &state->gw, &mask);
+
+                    // Start the dns server
+                    dns_server_t dns_server;
+                    dns_server_init(&dns_server, &state->gw);
+                    is_connected_ap = true;
+
+                    /*if (!tcp_server_open(state)) 
+                    {
+                        DEBUG_printf("failed to open server\n");
+                        return 1;
+                    }*/
+                }
+            }
+
+
         }
         vTaskDelay(100);
     }
@@ -519,7 +555,7 @@ void analog_in_task(__unused void *params)
 
 void http_server_task(__unused void *params)
 {
-    while(!is_connected)
+    while(!is_connected && !is_connected_ap)
     {
         vTaskDelay(100);
     }
@@ -534,11 +570,11 @@ void http_server_task(__unused void *params)
         static bool wasConnected = true;
         if(is_connected && wasConnected == false)
         {
-           // mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
+            mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
         }
         
         vTaskDelay(5000);
-        mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
+        //mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
     }
     
 }
@@ -713,6 +749,11 @@ void start_stream_mp3(const char* stream_link)
 {
     printf("start Stream: %s\n", stream_link);
     char* uri = strchr(stream_link,'/');
+    if(uri == NULL)
+    {
+        printf("ungültige URL");
+        return;
+    }
     char server_name[100];
     strncpy(server_name, stream_link, uri-stream_link);
     server_name[uri-stream_link]=0;
