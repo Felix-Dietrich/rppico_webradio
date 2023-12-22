@@ -27,12 +27,12 @@ const char* cgi_form_handler(int iIndex, int iNumParams, char *pcParam[], char *
     {
         if(strcmp(pcParam[i], "SSID") == 0)
         {
-            printf("SSID: %s\n", pcValue[i]);
+           // printf("SSID: %s\n", pcValue[i]);
             strcpy(flash_content_w.ssid,pcValue[i]);
         }
         if(strcmp(pcParam[i], "password") == 0)
         {
-            printf("password: %s\n", pcValue[i]);
+            //printf("password: %s\n", pcValue[i]);
             strcpy(flash_content_w.password,pcValue[i]);
         }
     }
@@ -49,7 +49,7 @@ const char* cgi_sender_handler(int iIndex, int iNumParams, char *pcParam[], char
     flash_content_w = *flash_content_r;
     for(int i = 0; i < iNumParams; i++)
     {
-        printf("%s=%s\n",pcParam[i],pcValue[i]);
+        //printf("%s=%s\n",pcParam[i],pcValue[i]);
         if(strcmp(pcParam[i], "sender1") == 0)
         {
             strcpy(flash_content_w.sender[0],pcValue[i]);
@@ -119,7 +119,7 @@ const char* cgi_equalizer_handler(int iIndex, int iNumParams, char *pcParam[], c
     flash_content_w = *flash_content_r;
     for(int i = 0; i < iNumParams; i++)
     {
-        printf("%s=%s\n",pcParam[i],pcValue[i]);
+        //printf("%s=%s\n",pcParam[i],pcValue[i]);
         if(strcmp(pcParam[i], "eq1") == 0)
         {
             flash_content_w.eq[0] = (float)atof(pcValue[i]);

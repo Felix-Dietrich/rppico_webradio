@@ -45,7 +45,7 @@ u16_t ssi_handler(int index, char *pcInsert, int iInsertLen)
     }
     if(index >= 15 && index <=25)
     {
-        printed = snprintf(pcInsert,iInsertLen, "%1.3f", flash_content_r->eq[index-15]);
+        printed = snprintf(pcInsert,iInsertLen, "%.1f", flash_content_r->eq[index-15]);
     }
     return printed;
 }

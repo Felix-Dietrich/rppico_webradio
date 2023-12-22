@@ -20,6 +20,7 @@
 #include "lwip/apps/mdns.h"
 #include <dhcpserver/dhcpserver.h>
 #include <dnsserver/dnsserver.h>
+#include "math.h"
 
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -30,32 +31,16 @@
 #define MAX_MP3_FRAME_SIZE 1441
 #define BUF_LEN (TCP_MSS + MAX_MP3_FRAME_SIZE)
 
-#define LADESCHLUSS_V 4.2
+#define LADESCHLUSS_V 4.0
 #define ENTLADESCHLUSS_V 3.2
 
-#define FILTERSIZE 200
+#define FILTERSIZE 128
+#define SPECTRUMSIZE 6
 
 
 const char ssid0[] = "dedietrich";
 const char pass0[] = "dedietrich";
 
-/*
-const char stream0[] = "vintageradio.ice.infomaniak.ch/vintageradio-high.mp3";    //vintagereadio
-const char stream1[] = "chmedia.streamabc.net/79-pilatus-mp3-192-4664468";        //radio Pilatus
-const char stream2[] = "stream.srg-ssr.ch/m/rsp/mp3_128";                         //radio swiss pop
-const char stream3[] = "stream.srg-ssr.ch/m/rsc_de/mp3_128";                      //swiss classic
-const char stream4[] = "chmedia.streamabc.net/79-rbern1-mp3-192-7860422";         //bern1
-//const char stream5[] = "www.energybern.ice.infomaniak.ch/energybern-high.mp3";    //energy bern
-//const char stream5[] = "www.energybern.ice.infomaniak.ch/energybern-low.mp3";
-const char stream5[] = "185.74.70.51/energybern-high.mp3";
-const char stream6[] = "stream.srg-ssr.ch/m/drs1/mp3_128";                        //srf1
-const char stream7[] = "stream.srg-ssr.ch/m/rsj/mp3_128";                         //swiss jazz
-const char stream8[] = "streaming.swisstxt.ch/m/drs3/mp3_128";                    //srf3
-const char stream9[] = "chmedia.streamabc.net/79-ffm-mp3-192-2470075";            //flashback
-const char stream10[] ="chmedia.streamabc.net/79-virginrockch-mp3-192-2872456";   //virgin radio
-
-const char* streams[] = {stream0,stream1,stream2,stream3,stream4,stream5,stream6,stream7,stream8,stream9,stream10};
-*/
 int current_stream = 0;
 
 typedef struct 
@@ -101,6 +86,7 @@ err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
 
 static void srv_txt(struct mdns_service *service, void *txt_userdata);
 void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume);
+void spectrum_to_filter(const float spectrum[6], int16_t filter[256]);
 
 int main()
 {
@@ -164,7 +150,7 @@ void main_task(__unused void *params)
             if(lastStream != current_stream)
             {
                 senderwechsel++;
-                printf("senderwechsel: %d\n",senderwechsel);
+                //printf("senderwechsel: %d\n",senderwechsel);
                 stop_stream = true;  
             }
              
@@ -176,6 +162,12 @@ void wifi_task(__unused void *params)
 {
     const char* ssid = flash_content_r->ssid;
     const char* pass = flash_content_r->password;
+
+    if((ssid[0] == 0) || (ssid[0] == 0xff) || (pass[0]== 0) || pass[0]== 0xff)
+    {
+        ssid=ssid0;
+        pass=pass0;
+    }
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
@@ -478,6 +470,7 @@ void analog_in_task(__unused void *params)
     adc_init();
     adc_gpio_init(26);
     adc_gpio_init(27);
+    adc_gpio_init(28);
     adc_select_input(0);
     while(true)
     {
@@ -489,12 +482,17 @@ void analog_in_task(__unused void *params)
         adc_select_input(2);
         uint16_t ADCresult2 = adc_read();
 
-        float battery_v = ADCresult2*3.3*2/4096;
+        float battery_v = ADCresult2*3.3*2.0/4096.0;
         battery_percent = (battery_v-ENTLADESCHLUSS_V)*100.0/(LADESCHLUSS_V-ENTLADESCHLUSS_V);
         if(battery_percent<0)
         {
             battery_percent = 0;
         }
+        if(battery_percent>100)
+        {
+            battery_percent = 100;
+        }
+
         volume = volume*0.95+(float)ADCresult0/4096*0.05;
 
         const int steps= 11;
@@ -529,14 +527,14 @@ void http_server_task(__unused void *params)
     mdns_resp_add_service(&cyw43_state.netif[CYW43_ITF_STA], "picow_freertos_httpd", "_http", DNSSD_PROTO_TCP, 80, srv_txt, NULL);
     while (true)
     {
-        static bool wasConnected = true;
+        /*static bool wasConnected = true;
         if(is_connected && wasConnected == false)
         {
             mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
-        }
+        }*/
         
         vTaskDelay(5000);
-        //mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
+        mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
     }
     
 }
@@ -709,11 +707,11 @@ err_t http_body(void *arg, struct tcp_pcb *conn, struct pbuf *p, err_t err)
 
 void start_stream_mp3(const char* stream_link)
 {
-    printf("start Stream: %s\n", stream_link);
+    //printf("start Stream: %s\n", stream_link);
     char* uri = strchr(stream_link,'/');
     if(uri == NULL)
     {
-        printf("ungültige URL");
+        //printf("ungültige URL");
         return;
     }
     char server_name[100];
@@ -745,14 +743,31 @@ void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
     static int16_t in_last[FILTERSIZE];
     int32_t processedData;
     int32_t volume2 = (1<<15)*volume;
+    bool update_filter=false;
+    static float last_spectrum[SPECTRUMSIZE] = {-10000};
 
-
+    for(int i = 0; i<SPECTRUMSIZE; i++)
+    {
+        if(last_spectrum[i] != flash_content_r->eq[i] )
+        {
+            last_spectrum[i]=flash_content_r->eq[i];
+            update_filter = true;
+        }
+    }
+/*
     for(int i = 0; i< FILTERSIZE; i++)
     {
         filter[i] = (1<<14)/FILTERSIZE;
         //filter[i]=0;
     }
     filter[FILTERSIZE/2] = 1<<8;
+*/
+
+    if(update_filter)
+    {
+        spectrum_to_filter(flash_content_r->eq,filter);
+        update_filter = false;
+    }
 
     out->samplerate = in->samplerate;
     out->size = in->size;
@@ -781,5 +796,64 @@ void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
     {
         in_last[i] = in->data[in->size-FILTERSIZE+i];
     }
+
+}
+
+void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTERSIZE])
+{
+    //clculate factor from dB
+    float spectrum_factor[SPECTRUMSIZE];
+    float filter_f[FILTERSIZE/2]={0};
+    for(int i = 0; i < SPECTRUMSIZE; i++)
+    {
+        spectrum_factor[i] = powf(10,spectrum[i]/10);
+    }
+
+    //interpolate spectrum #todo actual interpolating instead of copying
+    float spectrum_factor_all[FILTERSIZE/2]; //first element lowest frequency
+    int offset = 0;
+    for(int x = 0; x<SPECTRUMSIZE; x++)
+    {
+        for(int i = 0; i<(1<<x); i++)
+        {
+            spectrum_factor_all[offset + i]=spectrum_factor[x];
+        }
+        offset+= 1<<x;
+    }
+    /*for(int i = 0; i < FILTERSIZE/2; i++)
+    {
+        spectrum_factor_all[i]=spectrum_factor[(i*SPECTRUMSIZE-1)/FILTERSIZE];
+    }*/
+
+    
+    
+    spectrum_factor_all[0] /= 2;
+    spectrum_factor_all[(FILTERSIZE/2)-1] /= 2;      //weiss ich auch nicht wieso, aber so stimmt das Resultat mit numpy.fft.irfft überein
+   /* printf("\nspectrum_factor, ");
+    for(int i = 0; i < FILTERSIZE/2; i++)
+    {
+        printf("%.2f, ",spectrum_factor_all[i]);
+    }*/
+
+    //discrete fourrier transform
+    for(int i = 0; i<FILTERSIZE/2; i++)
+    {
+        for(int y = 0; y<FILTERSIZE/2; y++)
+        {
+            filter_f[i] += 1.0/(FILTERSIZE/2-1)*cosf(M_PI/(FILTERSIZE/2-1)*i*y)*spectrum_factor_all[y];
+        }
+    }
+
+    //kopieren fftshift und in fixed point wandeln
+    for(int i= 0; i < FILTERSIZE/2; i++)
+    {
+        filter[FILTERSIZE/2+i-1] = (1<<13)*filter_f[i];
+        filter[i] = (1<<13)*filter_f[(FILTERSIZE/2)-1-i];
+    }
+ /*   printf("\nfilter, ");
+    for(int i = 0; i < FILTERSIZE; i++)
+    {
+        printf("%d, ",filter[i]);
+    }*/
 
 }
