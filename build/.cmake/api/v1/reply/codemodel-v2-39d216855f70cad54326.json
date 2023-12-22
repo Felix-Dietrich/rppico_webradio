@@ -1,0 +1,1605 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						14
+					]
+				},
+				{
+					"build" : "FREERTOS_KERNEL",
+					"jsonFile" : "directory-FREERTOS_KERNEL-Debug-b08ad27344efcdf68167.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040"
+				},
+				{
+					"build" : "pico_extras",
+					"jsonFile" : "directory-pico_extras-Debug-94f7cb26bec091b6752d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras"
+				},
+				{
+					"build" : "audioI2SAPI",
+					"jsonFile" : "directory-audioI2SAPI-Debug-a42a6c26457510115317.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "audioI2SAPI",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "picomp3lib",
+					"jsonFile" : "directory-picomp3lib-Debug-c537aa6f7beabef39ead.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "picomp3lib",
+					"targetIndexes" : 
+					[
+						13
+					]
+				},
+				{
+					"build" : "pico-sdk",
+					"childIndexes" : 
+					[
+						6,
+						7,
+						84,
+						102
+					],
+					"jsonFile" : "directory-pico-sdk-Debug-b562bc1002dfd2e8f871.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk"
+				},
+				{
+					"build" : "pico-sdk/tools",
+					"jsonFile" : "directory-pico-sdk.tools-Debug-36002c596e524a4fe381.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/tools"
+				},
+				{
+					"build" : "pico-sdk/src",
+					"childIndexes" : 
+					[
+						8,
+						20,
+						81
+					],
+					"jsonFile" : "directory-pico-sdk.src-Debug-5646c0daaf4325dabcb2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src"
+				},
+				{
+					"build" : "pico-sdk/src/common",
+					"childIndexes" : 
+					[
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19
+					],
+					"jsonFile" : "directory-pico-sdk.src.common-Debug-eb8e226497c12f8a4ffd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common"
+				},
+				{
+					"build" : "pico-sdk/src/common/boot_picoboot",
+					"jsonFile" : "directory-pico-sdk.src.common.boot_picoboot-Debug-0cc419507dbbb5ee9080.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/boot_picoboot"
+				},
+				{
+					"build" : "pico-sdk/src/common/boot_uf2",
+					"jsonFile" : "directory-pico-sdk.src.common.boot_uf2-Debug-19a736c96acb780373ce.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/boot_uf2"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_base",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_base-Debug-ded65f56c0b68545df7e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_base"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_usb_reset_interface",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_usb_reset_interface-Debug-634854e4a99516bc8056.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_usb_reset_interface"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_bit_ops",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_bit_ops-Debug-8f90a2ff457bd98bdfe1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_bit_ops"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_binary_info",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_binary_info-Debug-4a41fe574440c2d81e6b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_binary_info"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_divider",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_divider-Debug-fa38e9da523ca7062df8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_divider"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_sync",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_sync-Debug-9d139ea9730a11958224.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_sync"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_time",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_time-Debug-4da348da83f8d5870fee.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_time"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_util",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_util-Debug-84118660976d2166d050.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_util"
+				},
+				{
+					"build" : "pico-sdk/src/common/pico_stdlib",
+					"jsonFile" : "directory-pico-sdk.src.common.pico_stdlib-Debug-f732d33fadcfa5f3911d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 8,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/common/pico_stdlib"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common",
+					"childIndexes" : 
+					[
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52,
+						53,
+						54,
+						55,
+						56,
+						57,
+						58,
+						59,
+						60,
+						61,
+						62,
+						63,
+						64,
+						65,
+						66,
+						67,
+						68,
+						69,
+						70,
+						72,
+						73,
+						74,
+						75,
+						76,
+						77,
+						78,
+						80
+					],
+					"jsonFile" : "directory-pico-sdk.src.rp2_common-Debug-e26ea982ddaaef63602e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_base",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_base-Debug-9f44808abbbc8a69b6a2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_base"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_claim",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_claim-Debug-3051365bac3bc5261ea9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_claim"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_adc",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_adc-Debug-f801642d2303dd40b2d2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_adc"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_clocks",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_clocks-Debug-4012e0d22f92f4b79769.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_clocks"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_dma",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_dma-Debug-f48bbf5ad77c900949b6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_dma"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_divider",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_divider-Debug-cb3c97ea230c07f12580.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_divider"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_exception",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_exception-Debug-9e7eacfccff390fbb059.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_exception"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_flash",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_flash-Debug-7803c5fcd065ae023a8e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_flash"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_gpio",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_gpio-Debug-991b380a341d4771a7ff.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_gpio"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_i2c",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_i2c-Debug-3c42ee05d8863255c17d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_i2c"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_interp",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_interp-Debug-7b9da1aa4ff78ae421eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_interp"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_irq",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_irq-Debug-1160f0c0f8e401789633.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_irq"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_pio",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_pio-Debug-e691918b58f9daf5651d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_pio"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_pll",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_pll-Debug-8909fcd77121b9d9ff49.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_pll"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_pwm",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_pwm-Debug-0e7785cded6c5e98b6f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_pwm"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_resets",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_resets-Debug-4290b7e4e855ea80799a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_resets"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_rtc",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_rtc-Debug-b16a5cc3f874c8f52200.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_rtc"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_spi",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_spi-Debug-8e09704ae217f3d29e05.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_spi"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_sync",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_sync-Debug-b3a801ff746de83ab728.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_sync"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_timer",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_timer-Debug-09aa1370a149466f2c3f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_timer"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_uart",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_uart-Debug-c65249c24d2a75191bda.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_uart"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_vreg",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_vreg-Debug-f0ab2e65d82447c92b83.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_vreg"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_watchdog",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_watchdog-Debug-421e0e03af929904657c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_watchdog"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/hardware_xosc",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.hardware_xosc-Debug-0e124f40c4a90ef22a68.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/hardware_xosc"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_bootrom",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_bootrom-Debug-be51cb86088b9ebf36ff.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_bootrom"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_platform",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_platform-Debug-4dbc25d39495292bf86b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_platform"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/boot_stage2",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.boot_stage2-Debug-696e6407cb0522a2925b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/boot_stage2",
+					"targetIndexes" : 
+					[
+						3,
+						4,
+						5
+					]
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_bootsel_via_double_reset",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_bootsel_via_double_reset-Debug-edacb5bfdad91b79db7b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_bootsel_via_double_reset"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_multicore",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_multicore-Debug-811921769de26182e9ea.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_multicore"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_unique_id",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_unique_id-Debug-6dd4b23cd58a4c57d024.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_unique_id"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_bit_ops",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_bit_ops-Debug-4d1a0cb8318579012eb8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_bit_ops"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_divider",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_divider-Debug-5ad9c9056334c99c804d.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_divider"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_double",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_double-Debug-4f119062757f45f98980.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_double"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_int64_ops",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_int64_ops-Debug-e37311fc8cbf781f7bfe.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_int64_ops"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_float",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_float-Debug-f503a4e4f1f84952be59.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_float"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_flash",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_flash-Debug-25d08770dad19be70762.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_flash"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_mem_ops",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_mem_ops-Debug-85bfaf340bc48e636668.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_mem_ops"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_malloc",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_malloc-Debug-0140770bb33067aa49bf.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_malloc"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_printf",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_printf-Debug-41ef6bac3cc87a60ad85.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_printf"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_rand",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_rand-Debug-64ce7a0bd752c96c98b8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_rand"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_stdio",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_stdio-Debug-e5f9b99014b69b0f978a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_stdio"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_stdio_semihosting",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_stdio_semihosting-Debug-b945cdbad1aa0cedb3c6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_stdio_semihosting"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_stdio_uart",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_stdio_uart-Debug-eb782c300bfa8466523b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_stdio_uart"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/cmsis",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.cmsis-Debug-c56366e4a68d7d2c6438.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/cmsis"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/tinyusb",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.tinyusb-Debug-2c6cdde9c73039a5d214.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/tinyusb"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_stdio_usb",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_stdio_usb-Debug-c2c63cfcb45454409283.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_stdio_usb"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_i2c_slave",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_i2c_slave-Debug-534d22499d42a797edf2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_i2c_slave"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_async_context",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_async_context-Debug-a2112a99bf57b8348c4b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_async_context"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_btstack",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_btstack-Debug-37cecb78e30e0a34aae9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_btstack"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_cyw43_driver",
+					"childIndexes" : 
+					[
+						71
+					],
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_cyw43_driver-Debug-2e4507c0cad4bf947985.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_cyw43_driver",
+					"targetIndexes" : 
+					[
+						1,
+						6
+					]
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_cyw43_driver.cybt_shared_bus-Debug-77626c3725195d24b4a7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 70,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_cyw43_driver/cybt_shared_bus"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_lwip",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_lwip-Debug-e2338b1c7b7552cdd155.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_lwip"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_cyw43_arch",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_cyw43_arch-Debug-640f8f9a6bf73522bf00.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_cyw43_arch"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_mbedtls",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_mbedtls-Debug-04a465ad64784b334f03.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_mbedtls"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_stdlib",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_stdlib-Debug-a090d6b717713e18a553.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_stdlib"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_cxx_options",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_cxx_options-Debug-09e13d674040ba33c9e0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_cxx_options"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_standard_link",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_standard_link-Debug-2c9a6d00b60b4904a239.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_standard_link"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_fix",
+					"childIndexes" : 
+					[
+						79
+					],
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_fix-Debug-a2322e7ef55d283f171f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_fix"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_fix.rp2040_usb_device_enumeration-Debug-2e443515ec400d579632.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 78,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration"
+				},
+				{
+					"build" : "pico-sdk/src/rp2_common/pico_runtime",
+					"jsonFile" : "directory-pico-sdk.src.rp2_common.pico_runtime-Debug-933e38979fe537b91429.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 20,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2_common/pico_runtime"
+				},
+				{
+					"build" : "pico-sdk/src/rp2040",
+					"childIndexes" : 
+					[
+						82,
+						83
+					],
+					"jsonFile" : "directory-pico-sdk.src.rp2040-Debug-a81811eb9e039ace87eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2040"
+				},
+				{
+					"build" : "pico-sdk/src/rp2040/hardware_regs",
+					"jsonFile" : "directory-pico-sdk.src.rp2040.hardware_regs-Debug-cb0ea64f2b2936fd6cd2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 81,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2040/hardware_regs"
+				},
+				{
+					"build" : "pico-sdk/src/rp2040/hardware_structs",
+					"jsonFile" : "directory-pico-sdk.src.rp2040.hardware_structs-Debug-e37912b45cd6f781f881.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 81,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/src/rp2040/hardware_structs"
+				},
+				{
+					"build" : "pico_extras/src",
+					"childIndexes" : 
+					[
+						85,
+						91
+					],
+					"jsonFile" : "directory-pico_extras.src-Debug-50cded815fa58d3e0891.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src"
+				},
+				{
+					"build" : "pico_extras/src/common",
+					"childIndexes" : 
+					[
+						86,
+						87,
+						88,
+						89,
+						90
+					],
+					"jsonFile" : "directory-pico_extras.src.common-Debug-bdd3b3baee987a009395.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 84,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common"
+				},
+				{
+					"build" : "pico_extras/src/common/pico_audio",
+					"jsonFile" : "directory-pico_extras.src.common.pico_audio-Debug-5da6e5b0a354fca521d0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 85,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common/pico_audio"
+				},
+				{
+					"build" : "pico_extras/src/common/pico_scanvideo",
+					"jsonFile" : "directory-pico_extras.src.common.pico_scanvideo-Debug-b66ce726068e9d5b7c9f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 85,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common/pico_scanvideo",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "pico_extras/src/common/pico_sd_card",
+					"jsonFile" : "directory-pico_extras.src.common.pico_sd_card-Debug-ecd4677180da449395ea.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 85,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common/pico_sd_card"
+				},
+				{
+					"build" : "pico_extras/src/common/pico_util_buffer",
+					"jsonFile" : "directory-pico_extras.src.common.pico_util_buffer-Debug-8b8e92112b5026b8c7dc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 85,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common/pico_util_buffer"
+				},
+				{
+					"build" : "pico_extras/src/common/platypus",
+					"jsonFile" : "directory-pico_extras.src.common.platypus-Debug-60372080620e0471a81e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 85,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/common/platypus"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common",
+					"childIndexes" : 
+					[
+						92,
+						93,
+						94,
+						95,
+						96,
+						97,
+						98,
+						99,
+						100,
+						101
+					],
+					"jsonFile" : "directory-pico_extras.src.rp2_common-Debug-e9634c4e17d32cbcf7a7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 84,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/hardware_rosc",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.hardware_rosc-Debug-8e2eb774958cdf58e6c7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/hardware_rosc"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_sleep",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_sleep-Debug-465873e00cafbfa2a45b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_sleep"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_audio_i2s",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_audio_i2s-Debug-a597b1f3dccc742014d4.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_audio_i2s",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_audio_pwm",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_audio_pwm-Debug-f0f762c7c9aadf72b5c2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_audio_pwm",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_audio_spdif",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_audio_spdif-Debug-f3a6631ef7a43166d5bc.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_audio_spdif",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_sd_card",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_sd_card-Debug-51c26d8d275954b85de8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_sd_card",
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/pico_scanvideo_dpi",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.pico_scanvideo_dpi-Debug-ac4059aebe4a1725b416.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/pico_scanvideo_dpi",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/usb_common",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.usb_common-Debug-ef339b717c2897842975.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/usb_common"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/usb_device",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.usb_device-Debug-415b53e073d26dad572e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/usb_device"
+				},
+				{
+					"build" : "pico_extras/src/rp2_common/usb_device_msc",
+					"jsonFile" : "directory-pico_extras.src.rp2_common.usb_device_msc-Debug-63b4a9bb04caa0dfb692.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 91,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-extras/src/rp2_common/usb_device_msc"
+				},
+				{
+					"build" : "pico-sdk/docs",
+					"jsonFile" : "directory-pico-sdk.docs-Debug-8e6b9a69d38ce766fc85.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 5,
+					"projectIndex" : 3,
+					"source" : "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk/docs"
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						3,
+						4
+					],
+					"name" : "wifi_MP3_Stream",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						13,
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "FreeRTOS-Kernel",
+					"parentIndex" : 0
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "pico_extras",
+					"parentIndex" : 0
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52,
+						53,
+						54,
+						55,
+						56,
+						57,
+						58,
+						59,
+						60,
+						61,
+						62,
+						63,
+						64,
+						65,
+						66,
+						67,
+						68,
+						69,
+						70,
+						71,
+						72,
+						73,
+						74,
+						75,
+						76,
+						77,
+						78,
+						79,
+						80,
+						81,
+						82,
+						83,
+						84,
+						85,
+						86,
+						87,
+						88,
+						89,
+						90,
+						91,
+						92,
+						93,
+						94,
+						95,
+						96,
+						97,
+						98,
+						99,
+						100,
+						101,
+						102
+					],
+					"name" : "pico_sdk",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ELF2UF2Build::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ELF2UF2Build-Debug-b87e68aae547ed377d8b.json",
+					"name" : "ELF2UF2Build",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 70,
+					"id" : "PioasmBuild::@c2fb4f534018e64680d5",
+					"jsonFile" : "target-PioasmBuild-Debug-0d75d155209054955272.json",
+					"name" : "PioasmBuild",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "audioI2SAPI::@f4af27bc8967efda738b",
+					"jsonFile" : "target-audioI2SAPI-Debug-8427ced578bb540dfa58.json",
+					"name" : "audioI2SAPI",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 47,
+					"id" : "bs2_default::@bc554eaed616d198a22d",
+					"jsonFile" : "target-bs2_default-Debug-faac890cde596caa5117.json",
+					"name" : "bs2_default",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 47,
+					"id" : "bs2_default_bin::@bc554eaed616d198a22d",
+					"jsonFile" : "target-bs2_default_bin-Debug-6a547c78265b973689f0.json",
+					"name" : "bs2_default_bin",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 47,
+					"id" : "bs2_default_padded_checksummed_asm::@bc554eaed616d198a22d",
+					"jsonFile" : "target-bs2_default_padded_checksummed_asm-Debug-b21299c852c4f281032e.json",
+					"name" : "bs2_default_padded_checksummed_asm",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 70,
+					"id" : "cyw43_driver_picow_cyw43_bus_pio_spi_pio_h::@c2fb4f534018e64680d5",
+					"jsonFile" : "target-cyw43_driver_picow_cyw43_bus_pio_spi_pio_h-Debug-ef3ed5511689d1f200d3.json",
+					"name" : "cyw43_driver_picow_cyw43_bus_pio_spi_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 94,
+					"id" : "pico_audio_i2s_audio_i2s_pio_h::@54354557063177904464",
+					"jsonFile" : "target-pico_audio_i2s_audio_i2s_pio_h-Debug-5758f1faa5868f94970a.json",
+					"name" : "pico_audio_i2s_audio_i2s_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 95,
+					"id" : "pico_audio_pwm_audio_pwm_pio_h::@5abc8f3433dbdc29da19",
+					"jsonFile" : "target-pico_audio_pwm_audio_pwm_pio_h-Debug-63f34f825f5d6a420a99.json",
+					"name" : "pico_audio_pwm_audio_pwm_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 96,
+					"id" : "pico_audio_spdif_audio_spdif_pio_h::@e375f3a3d97eece01a66",
+					"jsonFile" : "target-pico_audio_spdif_audio_spdif_pio_h-Debug-ebf2211ee4340896ebe3.json",
+					"name" : "pico_audio_spdif_audio_spdif_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 98,
+					"id" : "pico_scanvideo_dpi_timing_pio_h::@0f7e458cd46d5b281b17",
+					"jsonFile" : "target-pico_scanvideo_dpi_timing_pio_h-Debug-d4f313a4f96400cb30f7.json",
+					"name" : "pico_scanvideo_dpi_timing_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 87,
+					"id" : "pico_scanvideo_scanvideo_pio_h::@e43d9710235466bb041c",
+					"jsonFile" : "target-pico_scanvideo_scanvideo_pio_h-Debug-9bfb6dd42c6e76af29ba.json",
+					"name" : "pico_scanvideo_scanvideo_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 97,
+					"id" : "pico_sd_card_sd_card_pio_h::@0b1f3129c9fb6ae3f142",
+					"jsonFile" : "target-pico_sd_card_sd_card_pio_h-Debug-e7c2d968ae9422376267.json",
+					"name" : "pico_sd_card_sd_card_pio_h",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "picomp3lib::@d850af54cb5d6671a9c8",
+					"jsonFile" : "target-picomp3lib-Debug-072a78125f0828b1c484.json",
+					"name" : "picomp3lib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "wifi_MP3_Stream::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-wifi_MP3_Stream-Debug-33dd367ce0cff494cd61.json",
+					"name" : "wifi_MP3_Stream",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/felix/Dokumente/raspberryPiPico/pico/eigene-Prjekte/rppico_webradio/build",
+		"source" : "/home/felix/Dokumente/raspberryPiPico/pico/eigene-Prjekte/rppico_webradio"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

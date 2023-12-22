@@ -5,7 +5,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <audioI2SAPI/audio_i2s_api.h>
-#include <mp3dec.h>
+#include <picomp3lib/mp3dec.h>
 
 
 #ifndef RUN_FREERTOS_ON_CORE
