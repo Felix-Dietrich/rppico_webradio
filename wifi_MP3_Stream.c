@@ -22,7 +22,7 @@
 #define MAX_MP3_FRAME_SIZE 1441
 #define BUF_LEN (TCP_MSS + MAX_MP3_FRAME_SIZE)
 
-
+#define FILTERSIZE 64
 
 //char ssid[] = "***REMOVED***";
 //char pass[] = "***REMOVED***";
@@ -114,6 +114,10 @@ void main_task(__unused void *params)
     gpio_init(16);
     gpio_set_dir(16,GPIO_OUT);
     gpio_put(16,1);
+
+    gpio_init(11);
+    gpio_set_dir(11,GPIO_OUT);
+    gpio_put(11,1);
     static buffer_pcm_t audio_buffer;
     static int senderwechsel = 0;
     static int lastStream = -1;
@@ -250,9 +254,9 @@ void audio_decode_task(__unused void *params)
             inbuf = buffer_mp3 + syncoffset;
             static int bytesleft; 
             bytesleft = buffer_mp3_pos;
-            //gpio_put(16,1);
+            gpio_put(16,1);
             err= MP3Decode(decoder,&inbuf,&bytesleft, wav_buffer,0);
-            //gpio_put(16,0);
+            gpio_put(16,0);
             if(err == 0)
             {
                 MP3FrameInfo info;
@@ -305,13 +309,21 @@ void audio_decode_task(__unused void *params)
 void audio_process_task(__unused void *params)
 {
     static buffer_pcm_t buffer_raw;
+    static int16_t buffer_raw_last[FILTERSIZE];
     static buffer_pcm_t buffer_processed;
+    static int16_t filter[FILTERSIZE];
     static bool wasPlaying = false;
+
+    for(int i = 0; i< FILTERSIZE; i++)
+    {
+        filter[i] = (1<<15)/FILTERSIZE;
+    }
+
     while(true)
     {
-        if(xQueueReceive(raw_audio_queue,&buffer_raw,20)==pdFALSE)
+        if(xQueueReceive(raw_audio_queue,&buffer_raw,1)==pdFALSE)
         {
-            buffer_raw.size=1250;
+            buffer_raw.size=1152;
             buffer_raw.samplerate=44100;
             if (wasPlaying)
             {
@@ -321,7 +333,9 @@ void audio_process_task(__unused void *params)
             
             for(int i = 0; i < buffer_raw.size; i++)
             {
-                buffer_raw.data[i] = rand()%10000;
+                buffer_raw.data[i] = (rand()%10000);
+                //buffer_raw.data[i]=i<<5;
+                //buffer_raw.data[i]=30000;
             }
         }
         else
@@ -332,13 +346,38 @@ void audio_process_task(__unused void *params)
                 wasPlaying=true;
             }
         }
+       
         buffer_processed.samplerate= buffer_raw.samplerate;
-        buffer_processed.size = buffer_raw.size; 
+        buffer_processed.size = buffer_raw.size;
+        int32_t volume3 = (1<<16)/volume;
+        int32_t processedData;
         for(int i = 0; i < buffer_raw.size; i++)
         {
-            buffer_processed.data[i] = buffer_raw.data[i] * volume;
+            processedData = 0;
+            for (size_t y = 0; y < FILTERSIZE; y++)
+            {
+                if(i+y<FILTERSIZE)
+                {
+                    processedData += buffer_raw_last[i+y]*filter[y];
+                }
+                else
+                {
+                    processedData += buffer_raw.data[i+y-FILTERSIZE]*filter[y];
+                }
+                
+            }
+            
+            buffer_processed.data[i] = processedData/volume3; //Ganzzahl division ist schneller als float multiplikation
+            //buffer_processed.data[i] = buffer_raw.data[i] * volume;
+        }
+
+        //copy last (Filtersize) samples
+        for(int i = 0; i< FILTERSIZE; i++)
+        {
+            buffer_raw_last[i] = buffer_raw.data[buffer_raw.size-FILTERSIZE+i];
         }
         xQueueSend(processed_audio_queue,&buffer_processed,portMAX_DELAY);
+        
     }
 }
 
@@ -361,6 +400,7 @@ void audio_out_task(__unused void *params)
         else
         {
             vTaskDelay(1);
+            //taskYIELD();
         }
         if((buffer_wav.samplerate>10000) && (buffer_wav.samplerate<100000))
         {
@@ -385,6 +425,7 @@ void analog_in_task(__unused void *params)
     adc_select_input(0);
     while(true)
     {
+        gpio_put(11,1);
         adc_select_input(0);
         uint16_t ADCresult0 = adc_read();
         adc_select_input(1);
@@ -401,7 +442,7 @@ void analog_in_task(__unused void *params)
             current_stream = ADCresult1/divider;
             //printf("ADC selection: %d\n", ADCselection);
         }
-
+        gpio_put(11,0);
         vTaskDelay(20);
     }
 
@@ -533,6 +574,7 @@ err_t http_body(void *arg, struct tcp_pcb *conn, struct pbuf *p, err_t err)
         {
             puts("Err: too big to handle\n");
             tcp_recved(conn,p->tot_len);
+            pbuf_free(p);
             return ERR_OK;
         }
         
