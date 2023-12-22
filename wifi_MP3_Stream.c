@@ -4,8 +4,11 @@
 #include "lwip/apps/http_client.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
+#include "semphr.h"
 #include <audioI2SAPI/audio_i2s_api.h>
 #include <picomp3lib/mp3dec.h>
+#include "hardware/vreg.h"
 
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -18,16 +21,44 @@
 #define BUF_LEN (TCP_MSS + MAX_MP3_FRAME_SIZE)
 
 
+//char ssid[] = "***REMOVED***";
+//char pass[] = "***REMOVED***";
+
 char ssid[] = "***REMOVED***";
 char pass[] = "***REMOVED***";
 
-unsigned char buffer_mp3[BUF_LEN];
-short buffer_wav[4000];
-unsigned long tot_len=0;
-int buffer_mp3_pos = 0;
 
-TickType_t lastTick;
-TickType_t startTime;
+
+typedef struct 
+{
+    int size;
+    char data[TCP_MSS];
+}buffer_t;
+
+typedef struct 
+{
+    int size;
+    int16_t data[1250];
+}buffer_pcm_t;
+
+typedef struct
+{
+    int16_t *data;
+    int size;
+    int readIndex;
+    int writeIndex;
+    SemaphoreHandle_t mutex;
+}ring_buffer_t;
+
+float volume = 0.01;
+
+
+buffer_t http_buffer;
+QueueHandle_t compressed_audio_queue;
+QueueHandle_t pcm_audio_queue;
+ring_buffer_t *ringbuffer;
+
+
 
 void main_task(__unused void *params);
 void vLaunch( void);
@@ -36,8 +67,10 @@ void http_request(void);
 void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err);
 err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len);
 err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err);
-
-HMP3Decoder decoder;
+ring_buffer_t* createRingBuffer(int size);
+void destroyRingBuffer(ring_buffer_t* rb);
+void writeRingBuffer(ring_buffer_t* rb, uint16_t *data, int size);
+void readRingBuffer(ring_buffer_t *rb, uint16_t *data, int size);
 
 int main()
 {
@@ -66,9 +99,11 @@ int main()
 
 void main_task(__unused void *params)
 {
-    audio_i2s_api_init();
-    decoder = MP3InitDecoder();
-    
+    vreg_set_voltage(VREG_VOLTAGE_1_20);
+    set_sys_clock_khz(250000,true);
+    gpio_init(16);
+    gpio_set_dir(16,GPIO_OUT);
+    gpio_put(16,1);
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
@@ -134,10 +169,141 @@ void main_task(__unused void *params)
     }
 }
 
+
+void audio_out_task(__unused void *params)
+{
+    //printf("hallo von core%d\n",get_core_num());
+    audio_i2s_api_init();
+    uint8_t status = 0;
+    static buffer_pcm_t buffer_wav;
+    buffer_wav.size = 100;
+    while (true)
+    {
+        if(status == 0)
+        {
+            xQueueReceive(pcm_audio_queue,&buffer_wav,portMAX_DELAY);
+            //readRingBuffer(ringbuffer,buffer_wav.data,buffer_wav.size);
+            //xQueueReceiveFromISR(pcm_audio_queue,&buffer_wav,portMAX_DELAY);
+        }
+        else
+        {
+            //puts("else");
+            taskYIELD();
+        }
+        status = audio_i2s_api_write((int16_t*)buffer_wav.data,buffer_wav.size);
+    }
+    
+}
+
+
+void audio_decode_task(__unused void *params)
+{
+    static unsigned char buffer_mp3[BUF_LEN];
+    static buffer_pcm_t buffer_pcm;
+    static int buffer_mp3_pos = 0;
+    //printf("hallo von core%d\n",get_core_num());
+    HMP3Decoder decoder = MP3InitDecoder();
+    
+    while (true)
+    {
+        static buffer_t receive_buffer;
+        static int16_t wav_buffer[2500];
+        xQueueReceive(compressed_audio_queue,&receive_buffer,portMAX_DELAY);
+        //printf("bytes empfangen audio out task: %d\n", receive_buffer.size);
+        memcpy(buffer_mp3+buffer_mp3_pos,receive_buffer.data,receive_buffer.size);
+        buffer_mp3_pos+=receive_buffer.size;
+        //printf("total data: %d\n", buffer_mp3_pos);
+        //puts("decode\n");
+        
+        static int err;
+        err = -1;
+        // Find the start of the mp3 frame.
+        static int syncoffset; 
+        syncoffset = MP3FindSyncWord(buffer_mp3,buffer_mp3_pos);
+        if(syncoffset < 0)
+        {
+            // No sync word found, discard the buffer.
+            buffer_mp3_pos = 0;
+            puts("no sync found\n");
+            break;
+        }
+        if(syncoffset >0)
+        {
+            printf("syncoffset:%d\n",syncoffset);
+        }
+        while(buffer_mp3_pos>0)
+        {
+            
+          //  printf("syncoffset: %d\n", syncoffset);
+            static unsigned char* inbuf;
+            inbuf = buffer_mp3 + syncoffset;
+            static int bytesleft; 
+            bytesleft = buffer_mp3_pos;
+            gpio_put(16,1);
+            err= MP3Decode(decoder,&inbuf,&bytesleft, wav_buffer,0);
+            gpio_put(16,0);
+            if(err == 0)
+            {
+                MP3FrameInfo info;
+                MP3GetLastFrameInfo(decoder, &info);
+                buffer_mp3_pos -= (syncoffset+info.size);
+                memmove(buffer_mp3,buffer_mp3+syncoffset+info.size,buffer_mp3_pos);
+                syncoffset = 0;
+               // printf("decoded bitrate: %d\n", info.bitrate);
+                //printf("decoded bits per Sample: %d\n", info.bitsPerSample);
+                //printf("decoded layer: %d\n", info.layer);
+                //printf("decoded channels: %d\n", info.nChans);
+                //printf("decoded samples: %d\n", info.outputSamps);
+                //printf("decoded samplerate: %d\n", info.samprate);
+                //printf("decoded size: %d\n", info.size);
+                //printf("decoded version: %d\n", info.version);
+                //printf("remaining data: %d\n", buffer_mp3_pos);
+
+                if(info.outputSamps == 0) //no samples decoded
+                {
+                    buffer_mp3_pos = 0;
+                    puts("no decode");
+                    break;
+                }
+                //puts("audio out\n");
+                for(int i = 0; i < (info.outputSamps-1); i+=2)
+                {
+                    buffer_pcm.data[i/2] = (wav_buffer[i]+wav_buffer[i+1])>>3;
+                }
+                buffer_pcm.size = info.outputSamps/2;
+                //writeRingBuffer(ringbuffer,buffer_pcm.data,buffer_pcm.size);
+                xQueueSend(pcm_audio_queue,&buffer_pcm,portMAX_DELAY);
+            }
+            else if(err == -1) //data underflow
+            {
+               // puts("underflow");
+                break;
+            }
+            else //other error
+            {
+                buffer_mp3_pos = 0;
+                puts("other error");
+                break;
+            }
+        }
+    }  
+}
+
 void vLaunch( void) 
 {
-    TaskHandle_t task;
-    xTaskCreate(main_task, "TestMainThread", configMINIMAL_STACK_SIZE*2, NULL, TEST_TASK_PRIORITY, &task);
+    puts("task handle");
+    TaskHandle_t task,task2, task3;
+    puts("queues");
+    compressed_audio_queue = xQueueCreate(2,sizeof(http_buffer));
+    pcm_audio_queue = xQueueCreate(6,sizeof(buffer_pcm_t));
+    ringbuffer = createRingBuffer(4000);
+    puts("Tasks");
+    xTaskCreate(main_task, "TestMainThread", configMINIMAL_STACK_SIZE, NULL, TEST_TASK_PRIORITY, &task);
+//    vTaskCoreAffinitySet(task2,1);
+    xTaskCreate(audio_out_task,"Audio out Task",configMINIMAL_STACK_SIZE,NULL,TEST_TASK_PRIORITY,&task2);
+    xTaskCreate(audio_decode_task,"Audio decode Task",configMINIMAL_STACK_SIZE,NULL,TEST_TASK_PRIORITY,&task3);
+//    vTaskCoreAffinitySet(task3,2);
+    puts("start");
 
 #if NO_SYS && configUSE_CORE_AFFINITY && configNUM_CORES > 1
     // we must bind the main task to one core (well at least while the init is called)
@@ -158,11 +324,8 @@ void http_request(void)
     static httpc_connection_t settings;
     settings.result_fn = http_result;
     settings.headers_done_fn = http_header;
-    startTime = xTaskGetTickCount();
-    lastTick = startTime;
     //err_t err = httpc_get_file_dns("chmedia.streamabc.net", port, "/79-pilatus-mp3-192-4664468", &settings, http_body, NULL, NULL);
     err_t err = httpc_get_file_dns("stream.srg-ssr.ch", port, "/m/rsp/mp3_128", &settings, http_body, NULL, NULL);
-    //err_t err = httpc_get_file_dns("stream.srg-ssr.ch", port, "/m/rsp/mp3_128", &settings, http_body, NULL, NULL);
     //err_t err = httpc_get_file_dns("example.com", port, "/index.html", &settings, http_body, NULL, NULL);
     //err_t err = httpc_get_file_dns("ipv4.download.thinkbroadband.com", port, "/10MB.zip", &settings, http_body, NULL, NULL);
     //err_t err = httpc_get_file_dns("samples-files.com", port, "/samples/Audio/wav/sample-file-1.wav", &settings, http_body, NULL, NULL);
@@ -175,12 +338,6 @@ void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u
     puts("----------------------------------------");
     printf("local result=%d\n", httpc_result);
     printf("http result=%d\n", srv_res);
-    static int request;
-    request++;
-    printf("request: %d\n",request);
-    TickType_t elapsed = xTaskGetTickCount() - startTime;
-    printf("total rec: %d KBytes in %d ms = %d KBytes/s",tot_len/1024,elapsed, tot_len/elapsed);
-
 }
 
 err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t hdr_len, u32_t content_len)
@@ -190,11 +347,11 @@ err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t 
     printf("content_length=%d\n", content_len);
     printf("header length=%d\n", hdr_len);
     printf("buffer length:%d\n",hdr->tot_len);
-    pbuf_copy_partial(hdr, buffer_mp3, hdr_len, 0);
+    pbuf_copy_partial(hdr, http_buffer.data, hdr_len, 0);
     pbuf_free_header(hdr,hdr_len);
     printf("headers:\n");
-    buffer_mp3[hdr_len] = 0;
-    printf("%s", buffer_mp3);
+    http_buffer.data[hdr_len] = 0;
+    printf("%s", http_buffer);
     return ERR_OK;
 }
 
@@ -202,6 +359,7 @@ err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err)
 {
     //puts("\n\n\n\nhttp_body");
     //puts("-----------------------------------------");
+    //printf("http task core%d\n",get_core_num());
     if(p != NULL)
     {    
         if(p->tot_len > TCP_MSS)
@@ -212,85 +370,73 @@ err_t http_body(void *arg, struct altcp_pcb *conn, struct pbuf *p, err_t err)
         }
         
         //puts("buffer copy\n");
-        buffer_mp3_pos += pbuf_copy_partial(p, buffer_mp3+buffer_mp3_pos, p->tot_len, 0);
-        tot_len += p->tot_len;
-
+        pbuf_copy_partial(p, http_buffer.data, p->tot_len, 0);
+        http_buffer.size = p->tot_len;
+        //puts("queue_send");
+        xQueueSend(compressed_audio_queue,&http_buffer,portMAX_DELAY);
         //printf("received Data: %d\n",p->tot_len);
         tcp_recved(conn,p->tot_len);
         //puts("buffer free\n");
         pbuf_free(p);
-        
-
-        //printf("total data: %d\n", buffer_mp3_pos);
-        
-        //puts("decode\n");
-        int err = -1;
-        // Find the start of the mp3 frame.
-        int syncoffset = MP3FindSyncWord(buffer_mp3,buffer_mp3_pos);
-        if(syncoffset < 0)
-        {
-            // No sync word found, discard the buffer.
-            buffer_mp3_pos = 0;
-        }
-        while(buffer_mp3_pos>0)
-        {
-            
-          //  printf("syncoffset: %d\n", syncoffset);
-            unsigned char* inbuf = buffer_mp3 + syncoffset;
-            int bytesleft = buffer_mp3_pos;
-            err= MP3Decode(decoder,&inbuf,&bytesleft, buffer_wav,0);
-            //printf("mp3dec_err: %d\n", err);
-            
-            if(err == 0)
-            {
-                MP3FrameInfo info;
-                MP3GetLastFrameInfo(decoder, &info);
-                buffer_mp3_pos -= (syncoffset+info.size);
-                memmove(buffer_mp3,buffer_mp3+syncoffset+info.size,buffer_mp3_pos);
-                syncoffset = 0;
-               // printf("decoded bitrate: %d\n", info.bitrate);
-                //printf("decoded bits per Sample: %d\n", info.bitsPerSample);
-                //printf("decoded layer: %d\n", info.layer);
-                //printf("decoded channels: %d\n", info.nChans);
-                //printf("decoded samples: %d\n", info.outputSamps);
-                //printf("decoded samplerate: %d\n", info.samprate);
-                //printf("decoded size: %d\n", info.size);
-                //printf("decoded version: %d\n", info.version);
-                //printf("remaining data: %d\n", buffer_mp3_pos);
-
-            
-            
-
-                if(info.outputSamps == 0) //no samples decoded
-                {
-                    buffer_mp3_pos = 0;
-                    puts("no decode");
-                    break;
-                }
-                //puts("audio out\n");
-                audio_i2s_api_write((int16_t*)buffer_wav,info.outputSamps);
-            }
-            else if(err == -1) //data underflow
-            {
-                break;
-            }
-            else //other error
-            {
-                buffer_mp3_pos = 0;
-                puts("other error");
-                break;
-            }
-
-          
-        }
-
-     
-        
-        TickType_t elapsed = xTaskGetTickCount() - lastTick; 
-        //printf("rec: %d Bytes in %d ms = %d KBytes/s\n",p->tot_len, elapsed, p->tot_len/elapsed);
-        //printf("err %d\n",err);
-        //printf("%s", buffer);
-        lastTick = xTaskGetTickCount();
     }
     return ERR_OK;
+}
+
+ring_buffer_t* createRingBuffer(int size)
+{
+    ring_buffer_t *rb = (ring_buffer_t*)malloc(sizeof(ring_buffer_t));
+    rb->data = (uint16_t*)malloc(size* sizeof(uint16_t));
+    rb->size = size;
+    rb->readIndex = 0;
+    rb->writeIndex = 0;
+    rb->mutex = xSemaphoreCreateMutex();
+    puts("ringbuffer created\n");
+    return rb;
+}
+
+void destroyRingBuffer(ring_buffer_t* rb)
+{
+    vSemaphoreDelete(rb->mutex);
+    free(rb->data);
+    free(rb);
+}
+
+void writeRingBuffer(ring_buffer_t* rb, uint16_t *data, int size)
+{
+    for(int i = 0; i < size; i++)
+    {
+        //xSemaphoreTake(rb->mutex,portMAX_DELAY);
+        rb->data[rb->writeIndex] = data[i];
+        rb->writeIndex++;
+        if(rb->writeIndex >= rb->size)
+        {
+            rb->writeIndex = 0;
+        }
+        //xSemaphoreGive(rb->mutex);
+        while(rb->writeIndex == rb->readIndex)
+        {
+            taskYIELD();
+        }
+    }
+    
+}
+
+void readRingBuffer(ring_buffer_t *rb, uint16_t *data, int size)
+{
+    for(int i = 0; i < size; i++)
+    {
+        //xSemaphoreTake(rb->mutex,portMAX_DELAY);
+        data[i] = rb->data[rb->readIndex];
+        rb->readIndex++;
+        if(rb->readIndex >= rb->size)
+        {
+            rb->readIndex = 0;
+        }
+        //xSemaphoreGive(rb->mutex);
+        while((rb->readIndex+1)%rb->size == rb->writeIndex)
+        {
+            taskYIELD();
+        }
+    }
+
 }

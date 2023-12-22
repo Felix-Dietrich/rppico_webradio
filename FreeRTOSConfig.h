@@ -74,6 +74,7 @@
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
 #define configTOTAL_HEAP_SIZE                   (128*1024)
 #define configAPPLICATION_ALLOCATED_HEAP        0
+#define configUSE_HEAP_4                        1 //new
 
 /* Hook function related definitions. */
 #define configCHECK_FOR_STACK_OVERFLOW          0

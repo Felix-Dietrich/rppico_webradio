@@ -8,9 +8,10 @@
 #define PICO_AUDIO_I2S_DATA_PIN 2
 #define PICO_AUDIO_I2S_CLOCK_PIN_BASE 0
 #define SAMPLE_FREQ 48000
+//#define SAMPLE_FREQ 48000/2
 
 void audio_i2s_api_init(void);
-void audio_i2s_api_write(int16_t *buffer, int samplecount);
+uint8_t audio_i2s_api_write(int16_t *buffer, int samplecount);
 
 
 #endif

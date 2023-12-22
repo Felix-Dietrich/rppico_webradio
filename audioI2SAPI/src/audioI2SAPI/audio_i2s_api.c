@@ -2,8 +2,9 @@
 #include "audio_i2s_api.h"
 #include "pico/audio_i2s.h"
 #include "hardware/gpio.h"
+#include "string.h"
 
-#define SAMPLES_PER_BUFFER 3000
+#define SAMPLES_PER_BUFFER 1500
 
 
 typedef struct audio_buffer_pool audio_buffer_pool_t;
@@ -23,7 +24,7 @@ struct audio_buffer_pool *init_audio()
             .sample_stride = 2
     };
 
-    struct audio_buffer_pool *producer_pool = audio_new_producer_pool(&producer_format, 3,
+    struct audio_buffer_pool *producer_pool = audio_new_producer_pool(&producer_format, 1,
                                                                       SAMPLES_PER_BUFFER); // todo correct size
     bool __unused ok;
     const struct audio_format *output_format;
@@ -57,20 +58,21 @@ void audio_i2s_api_init(void)
 }
 
 
-void audio_i2s_api_write(int16_t *buffer, int sample_count)
+uint8_t audio_i2s_api_write(int16_t *buffer, int sample_count)
 {
-    audio_buffer_t *audio_buffer = take_audio_buffer(ap, true);
-    int16_t *samples = (int16_t *) audio_buffer->buffer->bytes;
-    int pos=0;
-    for (uint i = 0; i < sample_count/2; i++) 
+    audio_buffer_t *audio_buffer = take_audio_buffer(ap, false);
+    if(audio_buffer == NULL)
     {
-        samples[i] = buffer[i*2]>>5;
-        pos ++;
-        if (pos >= audio_buffer->max_sample_count) 
-        {
-            pos = 0;
-        }
+        return 1;
     }
-    audio_buffer->sample_count = sample_count/2;
+    int16_t *samples = (int16_t *) audio_buffer->buffer->bytes;
+    if(sample_count>audio_buffer->max_sample_count)
+    {
+        puts("audio buffer too small");
+        sample_count = audio_buffer->max_sample_count;
+    }
+    memcpy(samples,buffer, sample_count*2);
+    audio_buffer->sample_count = sample_count;
     give_audio_buffer(ap, audio_buffer);
+    return 0;
 }
