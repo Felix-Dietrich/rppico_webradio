@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Dietrich</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1, h2, p {
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            /* Styles for screens smaller than 600px (e.g., phones) */
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>De Dietrich Internet Radio</h1>
+    <br>
+    <h2>This bit is SSI:</h2>
+    <p>Battery: <!--#batt--> %</p>
+    <p>Temp: <!--#temp--> C</p>
+    <p>LED is: <!--#led--></p>
+    <br>
+    <h2>This bit is CGI:</h2>
+    <a href="/led.cgi?led=1"><button>LED ON</button></a>
+    <a href="/led.cgi?led=0"><button>LED OFF</button></a>
+    <br>
+    <br>
+    <a href="/index.shtml">Refresh</a>
+
+    <form action="/submit-form" method="get">
+        <label for="SSID">WIFI SSID:</label>
+        <input type="text" id="SSID" name="SSID" minlength="2" maxlength="32" required>
+        <br>
+        <label for="password">WIFI Passwort:</label>
+        <input type="password" id="password" name="password" minlength="2" maxlength="32" required>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>
