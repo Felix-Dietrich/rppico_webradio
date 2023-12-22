@@ -24,11 +24,11 @@
 
 
 
-char ssid[] = "***REMOVED***";
-char pass[] = "***REMOVED***";
-
 //char ssid[] = "***REMOVED***";
 //char pass[] = "***REMOVED***";
+
+char ssid[] = "***REMOVED***";
+char pass[] = "***REMOVED***";
 
 const char stream0[] = "vintageradio.ice.infomaniak.ch/vintageradio-high.mp3";    //vintagereadio
 const char stream1[] = "chmedia.streamabc.net/79-pilatus-mp3-192-4664468";        //radio Pilatus
@@ -116,38 +116,31 @@ void main_task(__unused void *params)
     gpio_put(16,1);
     static buffer_pcm_t audio_buffer;
     static int senderwechsel = 0;
+    static int lastStream = -1;
      //printf("main task on core%d\n",get_core_num());
-     int t = 0;
     while(true)
     {
         vTaskDelay(100);
         if(is_connected && !is_streaming)
         {
-            while (xQueueReceive(compressed_audio_queue, &http_buffer, 300));            
-            while (xQueueReceive(raw_audio_queue, &audio_buffer, 10));
+            //while (xQueueReceive(compressed_audio_queue, &http_buffer, 300));            
+            //while (xQueueReceive(raw_audio_queue, &audio_buffer, 10));
+            xQueueReset(compressed_audio_queue);
+            xQueueReset(raw_audio_queue);
             //volume = 0;
             start_stream_mp3(streams[current_stream]);
             is_streaming = true;
+            lastStream = current_stream;
         }
-        if(is_streaming)
-        {
-            t++;
-            if((t%40)==0)
+        if(is_streaming && !stop_stream)
+        {   
+            if(lastStream != current_stream)
             {
-                current_stream ++;
                 senderwechsel++;
                 printf("senderwechsel: %d\n",senderwechsel);
-                if(current_stream>10)
-                {
-                    current_stream = 0;
-                }
-                t=0;
-                stop_stream = true;
-            }       
-        }
-        else
-        {
-            t = 0;
+                stop_stream = true;  
+            }
+             
         }
     }
 }
@@ -357,6 +350,7 @@ void audio_out_task(__unused void *params)
     static buffer_pcm_t buffer_wav;
     buffer_wav.size = 100;
     buffer_wav.samplerate = 48000;
+
     while (true)
     {
         
@@ -387,11 +381,27 @@ void analog_in_task(__unused void *params)
 {
     adc_init();
     adc_gpio_init(26);
+    adc_gpio_init(27);
     adc_select_input(0);
     while(true)
     {
-        uint16_t ADCresult = adc_read();
-        volume = volume*0.95+(float)ADCresult/4096*0.05;
+        adc_select_input(0);
+        uint16_t ADCresult0 = adc_read();
+        adc_select_input(1);
+        uint16_t ADCresult1 = adc_read();
+        volume = volume*0.95+(float)ADCresult0/4096*0.05;
+
+        const int steps= 11;
+        const int ADCResolution = 4096;
+        const float overlap = 0.5;
+        const int divider = ADCResolution/steps+1;
+
+        if(abs(((current_stream*divider)+divider/2)-ADCresult1)>(2*divider*overlap))
+        {
+            current_stream = ADCresult1/divider;
+            //printf("ADC selection: %d\n", ADCselection);
+        }
+
         vTaskDelay(20);
     }
 
@@ -427,14 +437,48 @@ void vLaunch( void)
 }
 
 
-
 void http_result(void *arg, httpc_result_t httpc_result, u32_t rx_content_len, u32_t srv_res, err_t err)
 {
     is_streaming = false;
     stop_stream = 0;
     puts("\n\n\n\nhttp_result");
     puts("----------------------------------------");
-    printf("local result=%d\n", httpc_result);
+    printf("local result=");
+    switch (httpc_result)
+    {
+    case 0:
+        puts("File successfully received");
+    break;
+    case 1:
+        puts("Unknown error");
+    break;
+    case 2:
+        puts("Connection to server failed");
+    break;
+    case 3:
+        puts("Failed to resolve server hostname");
+    break;
+    case 4:
+        puts("Connection unexpectedly closed by remote server");
+    break;
+    case 5:
+        puts("Connection timed out (server didn't respond in time");
+    break;
+    case 6:
+        puts("Server responded with an error code");
+    break;
+    case 7:
+        puts("Local memory error");
+    break;
+    case 8:
+        puts("Local abort");
+    break;
+    case 9:
+        puts("Content length mismatch");
+    break;
+    default:
+        break;
+    }
     printf("http result=%d\n", srv_res);
     puts("retry");    
 }
@@ -460,7 +504,7 @@ err_t http_header(httpc_state_t *connection, void *arg, struct pbuf *hdr, u16_t 
     {
         puts("HTTP header empty");
         is_streaming = false;
-        return ERR_MEM;
+        return ERR_OK;
     }
 }
 
