@@ -35,11 +35,7 @@
 #define ENTLADESCHLUSS_V 3.2
 
 #define FILTERSIZE 128
-#define SPECTRUMSIZE 6
-
-
-const char ssid0[] = "dedietrich";
-const char pass0[] = "dedietrich";
+#define SPECTRUMSIZE 10
 
 int current_stream = 0;
 
@@ -117,6 +113,7 @@ int main()
 
 void main_task(__unused void *params)
 {
+    flash_utils_init();
     watchdog_enable(1000,1);
     gpio_init(16);
     gpio_set_dir(16,GPIO_OUT);
@@ -162,12 +159,7 @@ void wifi_task(__unused void *params)
 {
     const char* ssid = flash_content_r->ssid;
     const char* pass = flash_content_r->password;
-
-    if((ssid[0] == 0) || (ssid[0] == 0xff) || (pass[0]== 0) || pass[0]== 0xff)
-    {
-        ssid=ssid0;
-        pass=pass0;
-    }
+     
     if (cyw43_arch_init_with_country(CYW43_COUNTRY_SWITZERLAND))
     {
         while (true)
@@ -181,10 +173,9 @@ void wifi_task(__unused void *params)
     cyw43_arch_enable_sta_mode();
 
     cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-    
+    int last_status = INT32_MIN;
     while (true)
     {   
-        static int last_status = INT32_MIN;
         int new_status = cyw43_tcpip_link_status(&cyw43_state,CYW43_ITF_STA);
         if(last_status != new_status)
         {
@@ -195,7 +186,6 @@ void wifi_task(__unused void *params)
                 case CYW43_LINK_BADAUTH:
                 printf("badauth\n");
                 is_connected = false;
-                cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
                 break;
                 case CYW43_LINK_DOWN:
                 printf("link down\n");
@@ -230,14 +220,6 @@ void wifi_task(__unused void *params)
 
             if((new_status == CYW43_LINK_NONET) || (new_status == CYW43_LINK_BADAUTH))
             {
-                if(ssid==flash_content_r->ssid && pass==flash_content_r->password)
-                {
-                    ssid=ssid0;
-                    pass=pass0;
-                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-                }
-                else
-                {  
                     TCP_SERVER_T *state = calloc(1, sizeof(TCP_SERVER_T));
                     cyw43_arch_enable_ap_mode("deDietrich",NULL,CYW43_AUTH_WPA2_MIXED_PSK);
 
@@ -253,13 +235,16 @@ void wifi_task(__unused void *params)
                     dns_server_t dns_server;
                     dns_server_init(&dns_server, &state->gw);
                     is_connected_ap = true;
+                    while(true)
+                    {
+                        vTaskDelay(100);
+                    }
 
                     /*if (!tcp_server_open(state)) 
                     {
                         DEBUG_printf("failed to open server\n");
                         return 1;
                     }*/
-                }
             }
 
 
@@ -298,7 +283,6 @@ void audio_decode_task(__unused void *params)
             // No sync word found, discard the buffer.
             buffer_mp3_pos = 0;
             puts("no sync found\n");
-            break;
         }
         if(syncoffset >0)
         {
@@ -371,7 +355,6 @@ void audio_process_task(__unused void *params)
     static buffer_pcm_t buffer_processed;
     static bool isPlaying = false;
     static bool wasPlaying = false;
-
     while(true)
     {
      /* Freie Plätze der Queue anzeigen
@@ -467,11 +450,14 @@ void audio_out_task(__unused void *params)
 
 void analog_in_task(__unused void *params)
 {
+    float battery_v = -1;
+    int i = 0;
     adc_init();
     adc_gpio_init(26);
     adc_gpio_init(27);
     adc_gpio_init(28);
     adc_select_input(0);
+    
     while(true)
     {
         gpio_put(11,1);
@@ -479,19 +465,30 @@ void analog_in_task(__unused void *params)
         uint16_t ADCresult0 = adc_read();
         adc_select_input(1);
         uint16_t ADCresult1 = adc_read();
-        adc_select_input(2);
-        uint16_t ADCresult2 = adc_read();
+        
+        if(i>=10)   //akkustand muss nicht so oft aktualisiert werden
+        {
+            adc_select_input(2);
+            uint16_t ADCresult2 = adc_read();
 
-        float battery_v = ADCresult2*3.3*2.0/4096.0;
-        battery_percent = (battery_v-ENTLADESCHLUSS_V)*100.0/(LADESCHLUSS_V-ENTLADESCHLUSS_V);
-        if(battery_percent<0)
-        {
-            battery_percent = 0;
+            if(battery_v <0) //beim ersten Mal
+            {
+                battery_v = (ADCresult2*3.3*2.0/4096.0);
+            }
+            battery_v = battery_v*0.95 + (ADCresult2*3.3*2.0/4096.0)*0.05;
+            battery_percent = (battery_v-ENTLADESCHLUSS_V)*100.0/(LADESCHLUSS_V-ENTLADESCHLUSS_V);
+            if(battery_percent<0)
+            {
+                battery_percent = 0;
+            }
+            if(battery_percent>100)
+            {
+                battery_percent = 100;
+            }
+            i=0;
         }
-        if(battery_percent>100)
-        {
-            battery_percent = 100;
-        }
+        i++;
+
 
         volume = volume*0.95+(float)ADCresult0/4096*0.05;
 
@@ -748,9 +745,9 @@ void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 
     for(int i = 0; i<SPECTRUMSIZE; i++)
     {
-        if(last_spectrum[i] != flash_content_r->eq[i] )
+        if(last_spectrum[i] != flash_content_work.eq[i] )
         {
-            last_spectrum[i]=flash_content_r->eq[i];
+            last_spectrum[i]=flash_content_work.eq[i];
             update_filter = true;
         }
     }
@@ -765,7 +762,7 @@ void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 
     if(update_filter)
     {
-        spectrum_to_filter(flash_content_r->eq,filter);
+        spectrum_to_filter(flash_content_work.eq,filter);
         update_filter = false;
     }
 
@@ -809,8 +806,32 @@ void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTE
         spectrum_factor[i] = powf(10,spectrum[i]/10);
     }
 
-    //interpolate spectrum #todo actual interpolating instead of copying
+    
     float spectrum_factor_all[FILTERSIZE/2]; //first element lowest frequency
+    
+    for(int i = 0; i < 6; i++)
+    {
+        spectrum_factor_all[i] = spectrum_factor[i]; 
+    }
+    for(int i = 6; i < 8; i++)
+    {
+        spectrum_factor_all[i] = spectrum_factor[6]; 
+    }
+    for(int i = 8; i < 16; i++)
+    {
+        spectrum_factor_all[i] = spectrum_factor[7]; 
+    }
+    for(int i = 16; i < 32; i++)
+    {
+        spectrum_factor_all[i] = spectrum_factor[8]; 
+    }
+    for(int i = 32; i < 64; i++)
+    {
+        spectrum_factor_all[i] = spectrum_factor[9]; 
+    }
+
+    /*
+    //interpolate spectrum #todo actual interpolating instead of copying
     int offset = 0;
     for(int x = 0; x<SPECTRUMSIZE; x++)
     {
@@ -820,20 +841,10 @@ void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTE
         }
         offset+= 1<<x;
     }
-    /*for(int i = 0; i < FILTERSIZE/2; i++)
-    {
-        spectrum_factor_all[i]=spectrum_factor[(i*SPECTRUMSIZE-1)/FILTERSIZE];
-    }*/
-
-    
-    
+     */
     spectrum_factor_all[0] /= 2;
     spectrum_factor_all[(FILTERSIZE/2)-1] /= 2;      //weiss ich auch nicht wieso, aber so stimmt das Resultat mit numpy.fft.irfft überein
-   /* printf("\nspectrum_factor, ");
-    for(int i = 0; i < FILTERSIZE/2; i++)
-    {
-        printf("%.2f, ",spectrum_factor_all[i]);
-    }*/
+  
 
     //discrete fourrier transform
     for(int i = 0; i<FILTERSIZE/2; i++)
@@ -850,10 +861,5 @@ void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTE
         filter[FILTERSIZE/2+i-1] = (1<<13)*filter_f[i];
         filter[i] = (1<<13)*filter_f[(FILTERSIZE/2)-1-i];
     }
- /*   printf("\nfilter, ");
-    for(int i = 0; i < FILTERSIZE; i++)
-    {
-        printf("%d, ",filter[i]);
-    }*/
 
 }

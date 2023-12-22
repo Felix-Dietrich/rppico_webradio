@@ -14,5 +14,10 @@ typedef struct
 extern uint32_t ADDR_PERSISTENT[];
 static const flash_content_t* flash_content_r = (const flash_content_t*) ADDR_PERSISTENT;
 
+extern flash_content_t flash_content_work; //work copy of flash
+
 void flash_write(flash_content_t* flash_content_w);
+
+void flash_utils_init();
+
 #endif

@@ -7,13 +7,9 @@
     <style>
         body {
             font-family:  Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial;
-            margin: 0;
+            margin: 20px;
             padding: 0;
             background-color: #f0f0f0;
-        }
-
-        h1, h2, p, form, button {
-            margin: 10px;
         }
 
         label 
@@ -33,7 +29,7 @@
             font-size: 16px;
         }
 
-        form[action="/sender"] input[type="text"] 
+        .sender
         {
             width: 90%; /* You can adjust this value based on your preference */
             max-width: 600px; /* Set a maximum width if needed */
@@ -41,28 +37,36 @@
 
         .equalizer 
         {
-            display: flex;
-            /*flex-direction: column-reverse; /* Reverse the order to make it vertical */
-            align-items: center;
-            height: 300px;
-            margin: 5px;
-            /*writing-mode: tb-rl;*/
-            position: relative;
-			
+           display:flex;
         }
 
-        input[type="range"]
-        {
-        	flex-direction: column-reverse; /* Reverse the order to make it vertical */
-       		writing-mode: tb-rl;
-        }
-       
         .slider 
         {
+       		appearance: slider-vertical;
             height: 200px;
+            width: 20px;
             margin: 5px;
         }
+        
+        
+        .slider-labels
+        {	
+        	display: flex;
+            flex-direction: column;
+      		row-gap:5px;
+            justify-content: center;
+        }
+        
+        .frequency-labels
+        {	
+        	display: flex;
+            flex-direction: column-reverse;
+      		row-gap:12px;
+            margin:5px;
+            writing-mode: vertical-rl; 
+        }
 
+        
         @media only screen and (max-width: 600px) {
             /* Styles for screens smaller than 600px (e.g., phones) */
             h1 {
@@ -85,76 +89,187 @@
 </head>
 <body>
     <h1>De Dietrich Internet Radio</h1>
+    
     <br>
     <p>Battery: <!--#batt--> %</p>
     <br>
     <h2>SSID und Passwort setzen</h2>
-    <form action="/submit-form" method="get">
+    <div>
         <label for="SSID">WIFI SSID:</label>
         <br>
-        <input type="text" id="SSID" name="SSID" value="<!--#ssid-->" minlength="2" maxlength="32" required>
+        <input type="text" id="SSID" value="<!--#ssid-->" minlength="2" maxlength="32" required onchange="Changed('SSID', 'credentials')">
         <br>
         <label for="password">WIFI Passwort:</label>
         <br>
-        <input type="password" id="password" name="password" minlength="2" maxlength="32" required>
+        <input type="password" id="password" minlength="2" maxlength="32" required  onchange="Changed('password', 'credentials')">
         <br>
-        <input type="submit" value="Speichern">
-    </form>
+        <a href="/credentials?speichern=1"><button>Speichern</button></a>
+    </div>
     <br>
     <h2>Sender definieren</h2>
-    <form action="/sender" method="get">
-        <label for="Sender">Sender:</label>
+    <div>
+        
         <br>
-        <input type="text" id="sender1" name="sender1" value="<!--#sender1-->" maxlength="255" required>
+        <input class="sender" id="sender1" type="text" value="<!--#sender1-->" maxlength="255" onchange="Changed('sender1', 'sender')">
+        <label>109</label>
         <br>
-        <input type="text" id="sender2" name="sender2" value="<!--#sender2-->" maxlength="255" required>
+        <input class="sender" id="sender2" type="text" value="<!--#sender2-->" maxlength="255" onchange="Changed('sender2', 'sender')">
+        <label>108</label>
         <br>
-        <input type="text" id="sender3" name="sender3" value="<!--#sender3-->" maxlength="255" required>
+        <input class="sender" id="sender3" type="text" value="<!--#sender3-->" maxlength="255" onchange="Changed('sender3', 'sender')">
+        <label>106</label>
         <br>
-        <input type="text" id="sender4" name="sender4" value="<!--#sender4-->" maxlength="255" required>
+        <input class="sender" id="sender4" type="text" value="<!--#sender4-->" maxlength="255" onchange="Changed('sender4', 'sender')">
+        <label>104</label>
         <br>
-        <input type="text" id="sender5" name="sender5" value="<!--#sender5-->" maxlength="255" required>
+        <input class="sender" id="sender5" type="text" value="<!--#sender5-->" maxlength="255" onchange="Changed('sender5', 'sender')">
+        <label>102</label>
         <br>
-        <input type="text" id="sender6" name="sender6" value="<!--#sender6-->" maxlength="255" required>
+        <input class="sender" id="sender6" type="text" value="<!--#sender6-->" maxlength="255" onchange="Changed('sender6', 'sender')">
+        <label>100</label>
         <br>
-        <input type="text" id="sender7" name="sender7" value="<!--#sender7-->" maxlength="255" required>
+        <input class="sender" id="sender7" type="text" value="<!--#sender7-->" maxlength="255" onchange="Changed('sender7', 'sender')">
+        <label>98</label>
         <br>
-        <input type="text" id="sender8" name="sender8" value="<!--#sender8-->" maxlength="255" required>
+        <input class="sender" id="sender8" type="text" value="<!--#sender8-->" maxlength="255" onchange="Changed('sender8', 'sender')">
+        <label>95</label>
         <br>
-        <input type="text" id="sender9" name="sender9" value="<!--#sender9-->" maxlength="255" required>
+        <input class="sender" id="sender9" type="text" value="<!--#sender9-->" maxlength="255" onchange="Changed('sender9', 'sender')">
+        <label>92</label>
         <br>
-        <input type="text" id="sender10" name="sender10" value="<!--#sender10-->" maxlength="255" required>
+        <input class="sender" id="sender10" type="text" value="<!--#sender10-->" maxlength="255" onchange="Changed('sender10', 'sender')">
+        <label>88</label>
         <br>
-        <input type="text" id="sender11" name="sender11" value="<!--#sender11-->" maxlength="255" required>
+        <input class="sender" id="sender11" type="text" value="<!--#sender11-->" maxlength="255" onchange="Changed('sender11', 'sender')">
+        <label>87</label>
         <br>
-        <input type="submit" value="speichern">
-    </form>
+        <a href="/sender?speichern=1"><button>Speichern</button></a>
+    </div>
     <br>
     <h2>Equalizer</h2>
-    <form action="/equalizer" method="get">
+    <div>
         <div class="equalizer">
-            <input type="range" class="slider" id="eq1" name="eq1" min="-9" max="9" step="0.1" value="<!--#eq1-->" list="markers" >
-            <input type="range" class="slider" id="eq2" name="eq2" min="-9" max="9" step="0.1" value="<!--#eq2-->" list="markers" >
-            <input type="range" class="slider" id="eq3" name="eq3" min="-9" max="9" step="0.1" value="<!--#eq3-->" list="markers">
-            <input type="range" class="slider" id="eq4" name="eq4" min="-9" max="9" step="0.1" value="<!--#eq4-->" list="markers">
-            <input type="range" class="slider" id="eq5" name="eq5" min="-9" max="9" step="0.1" value="<!--#eq5-->" list="markers">
-            <input type="range" class="slider" id="eq6" name="eq6" min="-9" max="9" step="0.1" value="<!--#eq6-->" list="markers">
+            <input type="range" class="slider" id="eq1" name="eq1" min="-9" max="9" step="0.1" value="<!--#eq1-->" list="markers" onchange="Changed('eq1', 'equalizer')">
+            <input type="range" class="slider" id="eq2" name="eq2" min="-9" max="9" step="0.1" value="<!--#eq2-->" list="markers" onchange="Changed('eq2', 'equalizer')">
+            <input type="range" class="slider" id="eq3" name="eq3" min="-9" max="9" step="0.1" value="<!--#eq3-->" list="markers" onchange="Changed('eq3', 'equalizer')">
+            <input type="range" class="slider" id="eq4" name="eq4" min="-9" max="9" step="0.1" value="<!--#eq4-->" list="markers" onchange="Changed('eq4', 'equalizer')">
+            <input type="range" class="slider" id="eq5" name="eq5" min="-9" max="9" step="0.1" value="<!--#eq5-->" list="markers" onchange="Changed('eq5', 'equalizer')">
+            <input type="range" class="slider" id="eq6" name="eq6" min="-9" max="9" step="0.1" value="<!--#eq6-->" list="markers" onchange="Changed('eq6', 'equalizer')">
+            <input type="range" class="slider" id="eq7" name="eq7" min="-9" max="9" step="0.1" value="<!--#eq7-->" list="markers" onchange="Changed('eq7', 'equalizer')">
+            <input type="range" class="slider" id="eq8" name="eq8" min="-9" max="9" step="0.1" value="<!--#eq8-->" list="markers" onchange="Changed('eq8', 'equalizer')">
+            <input type="range" class="slider" id="eq9" name="eq9" min="-9" max="9" step="0.1" value="<!--#eq9-->" list="markers" onchange="Changed('eq9', 'equalizer')">
+            <input type="range" class="slider" id="eq10" name="eq10" min="-9" max="9" step="0.1" value="<!--#eq10-->" list="markers" onchange="Changed('eq10', 'equalizer')">
+            
+            <div class="slider-labels">
+               <div>12dB</div>
+              <div>9dB</div>
+              <div>6dB</div>
+              <div>3dB</div>
+              <div>0dB</div>
+              <div>-3dB</div>
+              <div>-6dB</div>
+              <div>-9dB</div>
+              <div>-12dB</div>
+            </div>
         </div>
+        <div class="frequency-labels">
+              <div>0.3 KHz</div>
+        	  <div>0.6 KHz</div>
+              <div>0.9 KHz</div>
+              <div>1.2 KHz</div>
+              <div>1.5 KHz</div>
+              <div>1.8 KHz</div>
+              <div>2 KHz</div>
+              <div>4 KHz</div>
+              <div>8 KHz</div>
+              <div>16 KHz</div>
+        </div>
+        
+          
+         <datalist id="markers">
+          <option value="0"></option>
+          <option value="3"></option>
+          <option value="6"></option>
+          <option value="9"></option>
+          <option value="-3"></option>
+          <option value="-6"></option>
+          <option value="-9"></option>
+          <option value="-12"></option>
+    	</datalist>
         <br>
-        <input type="submit" value="speichern">
-    </form>
-    <datalist id="markers">
-        <option value="0"></option>
-        <option value="3"></option>
-        <option value="6"></option>
-        <option value="9"></option>
-        <option value="-3"></option>
-        <option value="-6"></option>
-        <option value="-9"></option>
-        <option value="-12"></option>
-    </datalist>
+        <a href="/equalizer?speichern=1"><button>Speichern</button></a>
+    </div>
+
+    <script>
+        function Changed(sliderId, CGIhandler)
+        {
+            // Retrieve the slider value
+            const sliderValue = document.getElementById(sliderId).value;
+    
+            // Construct the URL with the slider value as a query parameter
+            const url = `/${CGIhandler}?${sliderId}=${sliderValue}`;
+    
+            // Fetch API to submit the form data asynchronously with the constructed URL
+            fetch(url, {
+                method: 'GET'
+            })
+            .then(response => {
+                // Handle the response as needed
+                console.log(response.body);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+   
     <br>
     <a href="/led.cgi?led=1"><button>LED ON</button></a>
     <a href="/led.cgi?led=0"><button>LED OFF</button></a>
+
+    <h2>Info</h2>
+    <ul>
+        <li>Version 1.0-08.12.2023
+            <ul>
+                <li>Erstes Release</li>
+            </ul>
+        </li>
+        <li>Version 1.1-16.12.2023
+            <ul>
+            	<li>SSID und Passwort mit Sonderzeichen möglich</li>
+                <li>Equalizer wird live übernommen</li>
+                <li>Bessere EQ auflösung bei mittleren Frequenzen</li>
+                <li>Fehlerbehebung welcher dazu führte, dass der "audio_decode_task" beendet wurde</li>
+                <li>Akkustand filtern, damit die Akkuanzeige nicht schwankt</li>
+            </ul>
+        </li>
+        <li>Version 1.11-16.12.2023
+            <ul>
+            	<li>Flash inhalt prüfen und durch default werte ersetzen, wenn ungültig</li>
+            </ul>
+        </li>
+        
+         <li>Version 1.20-
+            <ul>
+            	<li>Frequenzbeschriftung bei EQ</li>
+                <li>dB Beschriftung bei EQ</li>
+            </ul>
+        </li>
+        <li>to do
+            <ul>
+                <li>Akkustandanzeige Akutlisiert automatisch</li>
+                <li>Sender über Webinterface starten</li>
+                <li>Lautstärke über Webinterface einstellen</li>
+            	<li>Rauschen für EQ abstimmung</li>
+                <li>EQ mit Filterbank für bessere Auflösung bei tiefen Fequenzen</li>
+                <li>Aktuellen Sender anzeigen</li>
+                <li>windowing bei EQ für bessere Frequnztrennung</li>
+                
+            </ul>
+        </li>
+    </ul>
+
 </body>
 </html>
