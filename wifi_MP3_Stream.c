@@ -6,7 +6,6 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#include <audioI2SAPI/audio_i2s_api.h>
 #include <picomp3lib/mp3dec.h>
 #include "hardware/gpio.h"
 #include "hardware/adc.h"
@@ -21,6 +20,9 @@
 #include <dhcpserver/dhcpserver.h>
 #include <dnsserver/dnsserver.h>
 #include "math.h"
+#include "RTOS_tasks/audio_out_task.h"
+#include "RTOS_tasks/RTOS_globals.h"
+
 
 
 #ifndef RUN_FREERTOS_ON_CORE
@@ -39,18 +41,7 @@
 
 int current_stream = 0;
 
-typedef struct 
-{
-    int size;
-    char data[TCP_MSS];
-}buffer_t;
 
-typedef struct 
-{
-    int size;
-    int samplerate;
-    int16_t data[1250];
-}buffer_pcm_t;
 
 
 float volume = 0;
@@ -63,7 +54,6 @@ bool is_connected_ap = false;
 buffer_t http_buffer;
 QueueHandle_t compressed_audio_queue;
 QueueHandle_t raw_audio_queue;
-QueueHandle_t processed_audio_queue;
 
 
 typedef struct TCP_SERVER_T_ {
@@ -412,40 +402,6 @@ void audio_process_task(__unused void *params)
     }
 }
 
-void audio_out_task(__unused void *params)
-{
-    //printf("hallo von core%d\n",get_core_num());
-    audio_i2s_api_init();
-    uint8_t status = 0;
-    static buffer_pcm_t buffer_wav;
-    buffer_wav.size = 0;
-    buffer_wav.samplerate = 0;
-
-    while (true)
-    {
-        
-        if(status == 0)
-        {
-            xQueueReceive(processed_audio_queue,&buffer_wav,portMAX_DELAY);
-        }
-        else
-        {
-            vTaskDelay(1);
-            //taskYIELD();
-        }
-        if((buffer_wav.samplerate>10000) && (buffer_wav.samplerate<100000))
-        {
-            status = audio_i2s_api_write((int16_t*)buffer_wav.data,buffer_wav.size, buffer_wav.samplerate);
-            watchdog_update();
-        }
-        else
-        {
-            status = 0;
-        }
-        
-    }
-    
-}
 
 
 void analog_in_task(__unused void *params)

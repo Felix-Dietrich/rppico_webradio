@@ -7,15 +7,20 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
-set(PICO_SDK_PATH "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk")
-set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel")
+# set(PICO_SDK_PATH "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk")
+set(PICO_SDK_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/pico-sdk")
+
+# set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel")
+set(FREERTOS_KERNEL_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel")
 
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
-include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+# include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+include(/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+
 include(pico_extras_import.cmake)
 
 if (PICO_SDK_VERSION_STRING VERSION_LESS "1.4.0")
@@ -40,9 +45,11 @@ add_subdirectory(dhcpserver)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
+# Get the list of source files in in the 'RTOS_tasks' folder
+file(GLOB TASK_SOURCES RTOS_tasks/*.c)
 
-add_executable(wifi_MP3_Stream wifi_MP3_Stream.c)
+# Add executable. Default name is the project name, version 0.1
+add_executable(wifi_MP3_Stream wifi_MP3_Stream.c ${TASK_SOURCES})
 
 pico_set_program_name(wifi_MP3_Stream "wifi_MP3_Stream")
 pico_set_program_version(wifi_MP3_Stream "0.1")
@@ -58,6 +65,7 @@ target_link_libraries(wifi_MP3_Stream
 target_include_directories(wifi_MP3_Stream PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
+  ${CMAKE_CURRENT_LIST_DIR}/RTOS_tasks
   
 )
 
