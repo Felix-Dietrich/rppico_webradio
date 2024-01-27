@@ -1,0 +1,287 @@
+PI Pico Toolchain
+6.1.2024
+orion65@bluewin.ch
+________________________________________________________________________________
+
+
+6.1.2023
+
+	+ Toolchain inkl. Visual Studio Code installiert
+	
+	- Wichtig:
+			
+		- Die pico-examples können entweder direkt aus dem bash Terminal gebildet werden oder aus dem VSCode.
+		  
+		  - bash Terminal:
+		  	- Siehe getting started... wie für Linux beschrieben.
+		  	- Es wird dann der ganze pico-examples Baum gebildet.
+		  	  
+		  	  
+		  	  
+		  - VSCode	  
+		  	  Zuerst muss ein .vscode-Verzeichnis direkt unter pico-examples angelegt werden und darin die Konfig-Dateien:
+		  	  - c_cpp_properties.json
+		  	  - settings.json
+		  	  - tasks.json
+		  	  
+			
+			
+					- In .vscode direkt unter pico-examples müssen folgende Anpassungen gemacht werden:
+						- c_cpp_properties.json
+							{
+						    "configurations": [
+						        {
+						            "name": "Mac",
+						            "includePath": [
+						                "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/pico-sdk/**",
+						                "${workspaceFolder}/**"
+						            ],
+						            "defines": [],
+						            "macFrameworkPath": [
+						                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+						            ],
+						            "cStandard": "c17",
+						            "cppStandard": "c++17",
+						            "intelliSenseMode": "macos-clang-arm64"
+						        }
+						    ],
+						    "version": 4
+						}
+						
+						
+						- settings.json
+							{
+								"C_Cpp.default.compilerPath": "/opt/homebrew/bin/arm-none-eabi-gcc"
+							}
+
+						Dann in VSC Ordner zu Arbeitsbereich pico-examples hinzufügen.
+						Es muss der Ordner pico-examples angewählt werden, dann erscheinen alle Beispiele in der Seitenleiste im Explorer.
+						Dann können die Beispiele gebildet werden.
+						
+						Es kann also nicht einfach ein Unterordner als Arbeitsbereich hinzugefügt werden, da dann die entsprechenden Configs in .vscode fehlen würden.
+						Wird aber für ein einzelnes Beispiel ein .vscode mit den entsprechenden Configs direkt unter dem Stammordner des Beispiels angelegt, 
+						müsste auch ein einzelnes Beispiel direkt gebildet werden können.
+						Der build Ordner müsste auch noch erstellt werden.
+						Siehe auch Testprojekt pi/pico/test.
+	
+	+ Wie kann ein Projekt neu gebildet werden in VSCode?
+		- shift + command + P
+		- Dann open im Suchschlitz cmake suchen, dann CMAKE: Neuerstellung bereinigen anwählen.
+		
+		Oder:
+			- Config-Datei, die geändert wurde speichern.
+			- Links auf der Seitenleiste CMake-Icon anklicken und dann oben "Cache löschen und neu konfigurieren".
+			- command+shift+P und dann "Enwickler: Fenster neu laden"
+		
+		Oder die sicher Methode:
+		- Inhalt von build Ordner löschen dann build.
+		  Wenn an der Config z.B. CMakeLists.txt etwas geändert wurde dann funktioniert folgendes am besten:
+		  - VSCode schliessen
+		  - Inhalt des Verzeichnisses build löschen
+		  - VSCode neu öffnen
+		  - build
+		  
+						
+		
+	+ OpenOCD:
+		Für die Kommunikation mit der PicoProbe konnte OpenOCD installiert werden.
+		Es kann nun ein Programm aus der Konsole einfach geladen werden mit:
+		
+		Programm laden:
+		openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000" -c "program blink.elf verify reset exit"
+		openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000" -c "program wifi_MP3_Stream.elf verify reset exit"
+				
+		Der Befehl muss im gleichen Verzeichnis gestartet werden, wo das .elf File abgelegt ist.
+		
+		Reset Board:
+		openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 5000" -c "init;reset;exit"
+		
+		
+		- Es muss noch geprüft werden, wie der Befehl automatisch aus dem VSC gestartet werden kann.
+		
+	- GDB:	  
+	  Es gibt noch kein GDB für das Debugging für Macs mit Apple Silicon.
+	  
+	+ Serielles Interface der PicoProbe	  
+	  Das Serielle Interface über VSC funktioniert.
+	  Die Farben an der PicoProbe sind:
+	  	- SW = GND
+	  	- GB = RX
+	  	- OR = TX
+		
+		In VSC kann direkt eine serielles Terminal über die Erweiterungen installiert werden.
+		
+		
+	+ Die *.uf2 Files können mit cp kopiert werden. 		
+		Bsp.:
+		cp hello_serial.uf2 /Volumes/RPI-RP2/
+		
+	- To Do:
+		- Nach einer Lösung für GDB auf Apple Silicon suchen.
+		
+		+ Taste einrichten für einen reset, so dass rasch in den Bootloader gewechselt werden kann.
+			Pin 30 RUN gegen GND ziehen.
+			-> Ist nicht mehr nötig, da openocd und somit SWD nun funktionieren.
+			
+		+ RTOS installieren
+			In Verzeichnis /pi/pico/
+			 + git clone -b smp https://github.com/FreeRTOS/FreeRTOS-Kernel --recurse-submodules
+			
+			git clone https://github.com/raspberrypi/pico-extras --recurse-submodules
+			
+			
+		+ Tests über USB vom PICO-Board selbst um dann eine Konsole unter RTOS zu realisieren.
+		
+		+ Wo wird eingestellt, ob printf auf das Serielle- oder USB Interface drucken soll?
+			
+			In CMakeLists.txt:
+			pico_enable_stdio_usb(hello_usb 1)
+    	pico_enable_stdio_uart(hello_usb 0)
+		
+		+ Wo kann zwischen Debug- und Release Version gewählt werden?
+			VSC Linke Seite CMake (Dreieck mit dem Gabelschlüssel) dann oben unter Konfigurieren-> Debug.
+			
+		+ Wo kann der Boardtyp eingestellt werden?
+			- In CMakeLists.txt ganz oben, noch vor den Includes.
+			
+				# set(PICO_BOARD pico_w CACHE STRING "Board type")
+				set(PICO_BOARD pico CACHE STRING "Board type")
+ 			
+ 			Dann:
+ 				- Projekt schliessen
+ 				- Dateien im build-Verzeichnis löschen
+ 				- Projekt neu öffnen und builden
+ 				
+				
+
+9.1.2023
+	+ Das DeDietrich Projekt kann zu 100% gebildet werden :-)
+	
+	- To Do:
+		+ github account eröffnen
+		+ In VSCode "GitHub Pull Requests and Issues" installieren.
+		
+		+ GIT lokal in Console konfigurieren
+			
+		  git config --global user.email "orion65@bluewin.ch"
+		  git config --global user.name "ManfredDietrich"
+			
+			
+			Dann:
+				evtl. am Anfang lokales Verzeichnis .git des Projektordners löschen und VSCode neu starten.
+					- Im Stammordner des Projekts die Datei .gitignore anlegen mit mindestens:
+						build
+						.DS_Store
+						
+					- Lokales Verezeichnis in VSCode öffnen
+					- Auf der Seitenleiste auf Quellcodeverwaltung gehen
+					- Repository initialisieren
+					
+					- Vor einem commit/push/sync muss immer eine Nachricht eingegeben werden.
+					
+					Dann ganzes Projekt von Quellcodeverwaltung von VSCode aus pushen.
+				
+					- Auf der unteren Leiste Symbol Pfeil auf Wolke anklicken
+						- Oben im Dropdown privates Repository auswählen
+				
+				- Branch erstellen:
+					- Auf der Seitenleiste auf Quellcodeverwaltung
+						- Branches
+						- Oben in Dropdown ein Branch-Name eingeben z.B. md_Debug
+						- An der unteren Seitenleiste von main auf md_Debug wechseln und Branch veröffentlichen.
+						  Es muss noch kein Pullrequest gemacht werden.
+						
+						Dann:
+							- Änderung am Code machen z.B. sleep_ms(10);
+								-> In der Quellcodeverwaltung in den Änderungen wird nun die geänderte Datei aufgelistet (test.c)
+								- Auf + klicken, um die Anpassung zu stagen
+								- Message für den Commit eingeben und commiten.
+								- Noch einmal Message eingeben und Änderungen synchronisieren					
+								-> Erst jetzt ist die Anpassung im Branch md_Debug auf dem remote Git ersichtlich.
+								
+								 	  
+				- Branch zusammenführen
+					- In der Quellcodeverwaltung Pullrequest-Icon anklicken.
+					  Dann wird ersichtlich, was gemerged wird.
+					- Create Merge Commit
+					- Auf main-Branch wechseln und Änderungen synchronisieren (Icon an der unteren Seitenleiste).
+					
+			
+			
+		+ Mit Felix Repository sharen
+		
+		+ Auf dem MacBook Air M2 ist ein Webserver konfiguriert.
+			Unter
+		  http://192.168.16.51/m/
+		  sind mp3 Dateien gespeichert auf welche auch mit dem radio zugegriffen werden können.
+		  Das Verzeichnis befidet sich unter /Users/manfred/Websites.
+		  
+
+		- Reset via USB Konsole an pi pico:
+		
+			Aus:
+			https://forums.raspberrypi.com/viewtopic.php?t=326333
+			
+		  case BOOTSEL:
+				while ( get_core_num() != 0 ) vTaskDelay( pdMS_TO_TICKS(25) );	// stall until we come back in core 0
+				vTaskSuspendAll();
+				taskENTER_CRITICAL();
+				multicore_reset_core1();
+				multicore_launch_core1(wait_and_reboot);
+				reset_usb_boot(0,0);
+				taskEXIT_CRITICAL();	// should never get here!!!!
+				xTaskResumeAll();
+			break;
+			.
+			..
+		
+		  
+27.01.2024
+	- Make it better!
+		+ Radio auf dem Breadboard zum laufen bringen.
+		+ Test mit grossen Revox-Boxen
+			- Verzerrungen sind etwas hörbar vor allem bei Klaviermusik
+				
+		- Konzept Source
+			- code aufteilen
+				- 1 File pro Task
+				- Headerfile style und mehrfacheinlesen verhindern
+				- Separates file für globale Variabeln
+				- equalizer unabhängig
+		
+		- Speichermanagement
+			- Task stack tiefe analysieren (high water level)
+			- memoryoperationen sicher machen
+			- Webserver
+			- Flash platz (für mehr ssids und passwörter)
+			
+		- Code verbessern
+			- thread safe debug ausgabe
+				- debug level festlegen
+			
+		- Features
+			- konsole mit befehlen
+			- Akkustandanzeige Akutlisiert automatisch
+			- Sender über Webinterface starten
+			- Lautstärke über Webinterface einstellen
+			- Rauschen für EQ abstimmung
+			- EQ mit Filterbank für bessere Auflösung bei tiefen Fequenzen
+			- Aktuellen Sender anzeigen
+			- windowing bei EQ für bessere Frequenztrennung
+			- Wlan Signalstärke anzeigen
+			- Letze ssids und passwörter speichern
+			
+			
+			
+		- Codierstyle festlegen
+		- git konzept
+		- Einführung digitale Signalverarbeitung
+		- Radio zusammenbauen(löten)
+
+				
+EOM
+
+	  	
+	  
+	  
+		 
