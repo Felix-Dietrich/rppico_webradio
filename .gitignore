@@ -1,1 +1,5 @@
 build/
+htmldata.c
+CMakeLists.txt
+.DS_Store
+.vscode
