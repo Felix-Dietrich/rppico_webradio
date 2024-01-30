@@ -1,0 +1,16 @@
+{
+    "folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+        "files.associations": {
+            "audio_i2s_api.h": "c",
+            "watchdog.h": "c",
+            "main_task.h": "c",
+            "audio_out_task.h": "c",
+            "dnsserver.h": "c"
+        }
+    }
+}

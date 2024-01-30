@@ -14,14 +14,13 @@
 #include "lwip/apps/httpd.h"
 #include "lwipopts.h"
 #include <flash_utils/flash_utils.h>
-#include "ssi.h"
-#include "cgi.h"
 #include "lwip/apps/mdns.h"
 #include <dhcpserver/dhcpserver.h>
 #include <dnsserver/dnsserver.h>
 #include "math.h"
 
 #include "RTOS_tasks/main_task.h"
+#include "RTOS_tasks/httpd_server_task.h"
 #include "RTOS_tasks/audio_out_task.h"
 #include "RTOS_tasks/RTOS_globals.h"
 
@@ -42,7 +41,6 @@ void vLaunch( void);
 
 //void http_request(void);
 
-static void srv_txt(struct mdns_service *service, void *txt_userdata);
 void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume);
 void spectrum_to_filter(const float spectrum[6], int16_t filter[256]);
 
@@ -395,31 +393,6 @@ void analog_in_task(__unused void *params)
 
 }
 
-void http_server_task(__unused void *params)
-{
-    while(!is_connected && !is_connected_ap)
-    {
-        vTaskDelay(100);
-    }
-    httpd_init();
-    ssi_init();
-    cgi_init();
-    mdns_resp_init();
-    mdns_resp_add_netif(&cyw43_state.netif[CYW43_ITF_STA], "deDietrich");
-    mdns_resp_add_service(&cyw43_state.netif[CYW43_ITF_STA], "picow_freertos_httpd", "_http", DNSSD_PROTO_TCP, 80, srv_txt, NULL);
-    while (true)
-    {
-        /*static bool wasConnected = true;
-        if(is_connected && wasConnected == false)
-        {
-            mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
-        }*/
-        
-        vTaskDelay(5000);
-        mdns_resp_restart(&cyw43_state.netif[CYW43_ITF_STA]);
-    }
-    
-}
 
 /*
 void core1_task(__unused void *params)
@@ -467,20 +440,6 @@ void vLaunch( void)
     vTaskStartScheduler();
 }
 
-
-
-
-
-
-
-static void srv_txt(struct mdns_service *service, void *txt_userdata)
-{
-  err_t res;
-  LWIP_UNUSED_ARG(txt_userdata);
-
-  res = mdns_resp_add_service_txtitem(service, "path=/", 6);
-  LWIP_ERROR("mdns add service txt failed\n", (res == ERR_OK), return);
-}
 
 
 void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
@@ -612,3 +571,4 @@ void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTE
     }
 
 }
+

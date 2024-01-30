@@ -16,7 +16,7 @@ elseif(UNIX)
   set(PICO_SDK_PATH "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk")
   set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel")
 else()
-  message("😬 Für dieses Betriebsystem gibt es noch keine Konfoguration.")
+  message("😬 Für dieses Betriebsystem gibt es noch keine Konfiguration.")
 endif()
 
 
@@ -32,7 +32,7 @@ elseif(UNIX)
   message("😀 UNIX Konfiguration von Felix")
   include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 else()
-  message("😬 Für dieses Betriebsystem gibt es noch keine Konfoguration.")
+  message("😬 Für dieses Betriebsystem gibt es noch keine Konfiguration.")
 endif()
 
 

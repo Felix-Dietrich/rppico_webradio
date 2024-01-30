@@ -19,5 +19,6 @@ bool stop_stream = false;
 bool is_streaming = false;
 bool is_connected = false;
 bool is_connected_ap = false;
+int battery_percent = 0;
 
 

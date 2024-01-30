@@ -46,6 +46,7 @@ extern bool stop_stream;
 extern bool is_streaming;
 extern bool is_connected;
 extern bool is_connected_ap;
+extern int battery_percent;
 
 // Prototypes
 

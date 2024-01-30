@@ -12,6 +12,7 @@
 /*Variables*/
 
 /*Prototypes*/
+void http_server_task(__unused void *params);
 
 
 #endif
