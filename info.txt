@@ -241,6 +241,11 @@ ________________________________________________________________________________
 		+ Radio auf dem Breadboard zum laufen bringen.
 		+ Test mit grossen Revox-Boxen
 			- Verzerrungen sind etwas hörbar vor allem bei Klaviermusik
+				- Verzerrung genauer analysieren mit Oszilloskop. Sinus bei hier einfügen: 
+				  for(int i = 0; i < buffer_raw.size; i++)
+					{
+						buffer_raw.data[i] = (rand()%5000);
+					}
 				
 		- Konzept Source
 			- code aufteilen
@@ -261,7 +266,7 @@ ________________________________________________________________________________
 			
 		- Features
 			- konsole mit befehlen
-			- Akkustandanzeige Akutlisiert automatisch
+			- Akkustandanzeige Aktualisiert automatisch
 			- Sender über Webinterface starten
 			- Lautstärke über Webinterface einstellen
 			- Rauschen für EQ abstimmung
@@ -274,7 +279,15 @@ ________________________________________________________________________________
 			
 			
 		- Codierstyle festlegen
+			- underline für worttrennung
+			- 
 		- git konzept
+			- CMakeLists.txt nicht synchronisieren
+			- Pro Thema/Feature ein Branch
+			- Pro File arbeitet nur eine Person
+			- pull request wenn feature funktionniert
+			- mergen nach  erfolgreichem review oder test sonst zurückweisen mit kommentar
+			
 		- Einführung digitale Signalverarbeitung
 		- Radio zusammenbauen(löten)
 

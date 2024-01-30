@@ -10,9 +10,6 @@
 #include "hardware/watchdog.h"
 
 
-QueueHandle_t processed_audio_queue;
-
-
 void audio_out_task(__unused void *params)
 {
     //printf("hallo von core%d\n",get_core_num());
@@ -28,6 +25,7 @@ void audio_out_task(__unused void *params)
         {
             xQueueReceive(processed_audio_queue,&buffer_wav,portMAX_DELAY);
         }
+        
         else
         {
             vTaskDelay(1);

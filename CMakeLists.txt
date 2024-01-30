@@ -7,19 +7,34 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
-# set(PICO_SDK_PATH "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk")
-set(PICO_SDK_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/pico-sdk")
+if(APPLE)
+  message("😀 Mac OS Konfiguration von Manfred")
+  set(PICO_SDK_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/pico-sdk")
+  set(FREERTOS_KERNEL_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel")
+elseif(UNIX)
+  message("😀 UNIX Konfiguration von Felix")
+  set(PICO_SDK_PATH "/home/felix/Dokumente/raspberryPiPico/pico/pico-sdk")
+  set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel")
+else()
+  message("😬 Für dieses Betriebsystem gibt es noch keine Konfoguration.")
+endif()
 
-# set(FREERTOS_KERNEL_PATH "/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel")
-set(FREERTOS_KERNEL_PATH "/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel")
 
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
-
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
-# include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
-include(/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+
+if(APPLE)
+  message("😀 Mac OS Konfiguration von Manfred")
+  include(/Users/manfred/Documents/Manfred/Entwicklung/Projekte/pi/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+elseif(UNIX)
+  message("😀 UNIX Konfiguration von Felix")
+  include(/home/felix/Dokumente/raspberryPiPico/pico/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+else()
+  message("😬 Für dieses Betriebsystem gibt es noch keine Konfoguration.")
+endif()
+
 
 include(pico_extras_import.cmake)
 

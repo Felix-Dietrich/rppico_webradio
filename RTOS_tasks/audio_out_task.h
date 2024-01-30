@@ -9,24 +9,11 @@
 #include "queue.h"
 
 /*Definitions*/
-extern QueueHandle_t processed_audio_queue;
 
 /*Variables*/
 
 /*Prototypes*/
 void audio_out_task(__unused void *params);
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #endif
