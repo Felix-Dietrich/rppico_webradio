@@ -1,23 +1,13 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "pico/cyw43_arch.h"
-#include "lwip/apps/http_client.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "semphr.h"
-#include <picomp3lib/mp3dec.h>
+//#include "semphr.h"
 #include "hardware/gpio.h"
-#include "hardware/adc.h"
 #include "hardware/vreg.h"
 #include "hardware/watchdog.h"
-#include "lwip/apps/httpd.h"
-#include "lwipopts.h"
 #include <flash_utils/flash_utils.h>
-#include "lwip/apps/mdns.h"
-#include <dhcpserver/dhcpserver.h>
-#include <dnsserver/dnsserver.h>
-#include "math.h"
 
 #include "RTOS_tasks/RTOS_globals.h"
 #include "RTOS_tasks/main_task.h"
@@ -63,14 +53,6 @@ int main()
 #endif
     return 0;
 }
-
-
-
-
-
-
-
-
 
 /*
 void core1_task(__unused void *params)
