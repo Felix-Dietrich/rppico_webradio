@@ -5,7 +5,6 @@
 * Created: 30.01.2023 Manfred Dietrich
 * Description: http server for configuration webpage 
 */
-#include "FreeRTOS.h"
 
 /*Definitions*/
 

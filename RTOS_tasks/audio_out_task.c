@@ -4,10 +4,13 @@
 * Description: Fetches the PCM audio data from the queue and pushes them to the I2S audio amplifier 
 */
 
-#include "audio_out_task.h"
 #include <audioI2SAPI/audio_i2s_api.h>
+#include <hardware/watchdog.h>
+#include <FreeRTOS.h>
+#include <queue.h>
+
+#include "audio_out_task.h"
 #include "RTOS_globals.h"
-#include "hardware/watchdog.h"
 
 
 void audio_out_task(__unused void *params)

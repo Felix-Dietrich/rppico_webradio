@@ -12,10 +12,11 @@
 #include <hardware/gpio.h>
 #include <flash_utils/flash_utils.h>
 #include <math.h>
+#include <FreeRTOS.h>
+#include <queue.h>
+#include <hardware/watchdog.h>
 
 #include "RTOS_globals.h"
-#include "queue.h"
-#include "hardware/watchdog.h"
 
 // Prototypes
 static void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filter[FILTERSIZE]);

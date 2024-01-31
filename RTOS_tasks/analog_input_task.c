@@ -7,11 +7,13 @@
 
 //#include "pico/stdlib.h"
 #include <stdlib.h>
+#include <FreeRTOS.h>
+#include <queue.h>
+#include <hardware/watchdog.h>
+#include <hardware/adc.h>
 
 #include "analog_input_task.h"
 #include "RTOS_globals.h"
-#include "hardware/watchdog.h"
-#include "hardware/adc.h"
 
 void analog_in_task(__unused void *params)
 {

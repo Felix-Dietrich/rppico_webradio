@@ -5,8 +5,8 @@
 * Created: 27.01.2023 Felix Dietrich
 * Description: Contains global definitions and variables
 */
-#include "FreeRTOS.h"
-#include "queue.h"
+#include <FreeRTOS.h>
+#include <queue.h>
 
 // Definitions
 #define TCP_MSS 1460

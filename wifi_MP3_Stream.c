@@ -1,12 +1,12 @@
 #include <stdio.h>
-#include "pico/stdlib.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-//#include "semphr.h"
-#include "hardware/gpio.h"
-#include "hardware/vreg.h"
-#include "hardware/watchdog.h"
+#include <pico/stdlib.h>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
+//#include <semphr.h>
+#include <hardware/gpio.h>
+#include <hardware/vreg.h>
+#include <hardware/watchdog.h>
 #include <flash_utils/flash_utils.h>
 
 #include "RTOS_tasks/RTOS_globals.h"

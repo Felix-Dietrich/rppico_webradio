@@ -9,11 +9,12 @@
 #include <dhcpserver/dhcpserver.h>
 #include <dnsserver/dnsserver.h>
 #include <flash_utils/flash_utils.h>
+#include <FreeRTOS.h>
+#include <hardware/watchdog.h>
+#include <pico/cyw43_arch.h>
 
 #include "analog_input_task.h"
 #include "RTOS_globals.h"
-#include "hardware/watchdog.h"
-#include "pico/cyw43_arch.h"
 
 
 // Defintions

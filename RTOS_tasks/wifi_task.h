@@ -5,7 +5,6 @@
 * Created: 31.01.2023 Manfred Dietrich
 * Description: WiFi connection management 
 */
-#include "FreeRTOS.h"
 
 /*Definitions*/
 

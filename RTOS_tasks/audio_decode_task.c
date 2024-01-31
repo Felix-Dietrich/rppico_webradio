@@ -10,10 +10,11 @@
 #include <string.h>
 #include <picomp3lib/mp3dec.h>
 #include <hardware/gpio.h>
+#include <hardware/watchdog.h>
+#include <FreeRTOS.h>
+#include <queue.h>
 
 #include "RTOS_globals.h"
-#include "queue.h"
-#include "hardware/watchdog.h"
 
 
 void audio_decode_task(__unused void *params)

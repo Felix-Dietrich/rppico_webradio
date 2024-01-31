@@ -5,8 +5,6 @@
 * Created: 27.01.2023 Manfred Dietrich
 * Description: ADC for potentiometers (volume, station)and battery 
 */
-#include "FreeRTOS.h"
-#include "queue.h"
 
 /*Definitions*/
 

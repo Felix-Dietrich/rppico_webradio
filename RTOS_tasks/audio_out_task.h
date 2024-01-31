@@ -5,8 +5,6 @@
 * Created: 27.01.2023 Felix Dietrich
 * Description: Fetches the PCM audio data from the queue and pushes them to the I2S audio amplifier 
 */
-#include "FreeRTOS.h"
-#include "queue.h"
 
 /*Definitions*/
 

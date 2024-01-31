@@ -4,8 +4,6 @@
 * Description: http server for configuration webpage 
 */
 
-#include "RTOS_globals.h"
-#include "httpd_server_task.h"
 
 #include <hardware/watchdog.h>
 #include <pico/cyw43_arch.h>
@@ -15,6 +13,11 @@
 #include <lwip/apps/mdns.h>
 #include <dhcpserver/dhcpserver.h>
 #include <dnsserver/dnsserver.h>
+#include <FreeRTOS.h>
+
+#include "RTOS_globals.h"
+#include "httpd_server_task.h"
+
 
 const char* ssi_tags[] = {"batt","temp", "led", "ssid", "sender1", "sender2", "sender3", "sender4", "sender5", "sender6", "sender7", "sender8", "sender9", "sender10", "sender11", 
                           "eq1", "eq2", "eq3", "eq4", "eq5", "eq6", "eq7", "eq8", "eq9", "eq10"};

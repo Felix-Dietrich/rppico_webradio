@@ -4,15 +4,16 @@
 * Description: Stream supervisor 
 */
 
-#include "main_task.h"
-#include "RTOS_globals.h"
-
 #include <string.h>
 #include <audioI2SAPI/audio_i2s_api.h>
 #include <flash_utils/flash_utils.h>
 #include <hardware/watchdog.h>
 #include <hardware/gpio.h>
 #include <lwip/apps/http_client.h>
+#include <FreeRTOS.h>
+
+#include "main_task.h"
+#include "RTOS_globals.h"
 
 
 void start_stream_mp3(const char* stream_link);
