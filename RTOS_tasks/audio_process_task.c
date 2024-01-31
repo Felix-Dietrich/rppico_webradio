@@ -168,18 +168,22 @@ static void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filte
     {
         spectrum_factor_all[i] = spectrum_factor[i]; 
     }
+
     for(int i = 6; i < 8; i++)
     {
         spectrum_factor_all[i] = spectrum_factor[6]; 
     }
+
     for(int i = 8; i < 16; i++)
     {
         spectrum_factor_all[i] = spectrum_factor[7]; 
     }
+    
     for(int i = 16; i < 32; i++)
     {
         spectrum_factor_all[i] = spectrum_factor[8]; 
     }
+    
     for(int i = 32; i < 64; i++)
     {
         spectrum_factor_all[i] = spectrum_factor[9]; 
@@ -216,6 +220,5 @@ static void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], int16_t filte
         filter[FILTERSIZE/2+i-1] = (1<<13)*filter_f[i];
         filter[i] = (1<<13)*filter_f[(FILTERSIZE/2)-1-i];
     }
-
 }
 

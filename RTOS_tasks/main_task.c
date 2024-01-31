@@ -40,6 +40,7 @@ void main_task(__unused void *params)
     while(true)
     {
         vTaskDelay(100);
+
         if(is_connected && !is_streaming)
         {
             //start_stream_mp3(streams[current_stream]);
@@ -53,6 +54,7 @@ void main_task(__unused void *params)
             }
             lastStream = current_stream;
         }
+        
         if(is_streaming && !stop_stream)
         {   
             if(lastStream != current_stream)
@@ -71,11 +73,13 @@ void start_stream_mp3(const char* stream_link)
 {
     //printf("start Stream: %s\n", stream_link);
     char* uri = strchr(stream_link,'/');
+    
     if(uri == NULL)
     {
         //printf("ungültige URL");
         return;
     }
+    
     char server_name[100];
     strncpy(server_name, stream_link, uri-stream_link);
     server_name[uri-stream_link]=0;
@@ -197,6 +201,7 @@ err_t http_body(void *arg, struct tcp_pcb *conn, struct pbuf *p, err_t err)
         
         //return ERR_OK;
     }
+    
     if(p != NULL)
     {    
         if(p->tot_len > TCP_MSS)

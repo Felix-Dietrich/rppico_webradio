@@ -44,6 +44,7 @@ void wifi_task(__unused void *params)
 
     cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
     int last_status = INT32_MIN;
+
     while (true)
     {   
         int new_status = cyw43_tcpip_link_status(&cyw43_state,CYW43_ITF_STA);
@@ -54,36 +55,41 @@ void wifi_task(__unused void *params)
             switch(new_status)
             {
                 case CYW43_LINK_BADAUTH:
-                printf("badauth\n");
-                is_connected = false;
+                    printf("badauth\n");
+                    is_connected = false;
                 break;
-                case CYW43_LINK_DOWN:
-                printf("link down\n");
-                is_connected = false;
-                cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-                break;
-                case CYW43_LINK_FAIL:
-                printf("link fail\n");
-                is_connected = false;
-                cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-                break;
-                case CYW43_LINK_JOIN:
-                printf("link join\n");
-                is_connected = false;
-                break;
-                case CYW43_LINK_NOIP:
-                printf("link no ip\n");
-                is_connected = false;
-                cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
-                break;
-                case CYW43_LINK_NONET:
-                printf("link no net\n");
-                is_connected = false;
-                break;
-                case CYW43_LINK_UP:
-                printf("link up: %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
-                is_connected = true;
                 
+                case CYW43_LINK_DOWN:
+                    printf("link down\n");
+                    is_connected = false;
+                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                break;
+                
+                case CYW43_LINK_FAIL:
+                    printf("link fail\n");
+                    is_connected = false;
+                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                break;
+                
+                case CYW43_LINK_JOIN:
+                    printf("link join\n");
+                    is_connected = false;
+                break;
+                
+                case CYW43_LINK_NOIP:
+                    printf("link no ip\n");
+                    is_connected = false;
+                    cyw43_arch_wifi_connect_async(ssid, pass, CYW43_AUTH_WPA2_AES_PSK);
+                break;
+                
+                case CYW43_LINK_NONET:
+                    printf("link no net\n");
+                    is_connected = false;
+                break;
+                
+                case CYW43_LINK_UP:
+                    printf("link up: %s\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
+                    is_connected = true;
                 break;
 
             }
@@ -105,6 +111,7 @@ void wifi_task(__unused void *params)
                     dns_server_t dns_server;
                     dns_server_init(&dns_server, &state->gw);
                     is_connected_ap = true;
+                    
                     while(true)
                     {
                         vTaskDelay(100);
@@ -116,8 +123,6 @@ void wifi_task(__unused void *params)
                         return 1;
                     }*/
             }
-
-
         }
         vTaskDelay(100);
     }
