@@ -10,7 +10,9 @@
             "watchdog.h": "c",
             "main_task.h": "c",
             "audio_out_task.h": "c",
-            "dnsserver.h": "c"
+            "dnsserver.h": "c",
+            "stdlib.h": "c",
+            "rtos_globals.h": "c"
         }
     }
 }
