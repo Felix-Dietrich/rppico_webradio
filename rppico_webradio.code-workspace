@@ -12,7 +12,8 @@
             "audio_out_task.h": "c",
             "dnsserver.h": "c",
             "stdlib.h": "c",
-            "rtos_globals.h": "c"
+            "rtos_globals.h": "c",
+            "freertos.h": "c"
         }
     }
 }
