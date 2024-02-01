@@ -136,7 +136,7 @@ ________________________________________________________________________________
 			
 			In CMakeLists.txt:
 			pico_enable_stdio_usb(hello_usb 1)
-    	pico_enable_stdio_uart(hello_usb 0)
+    		pico_enable_stdio_uart(hello_usb 0)
 		
 		+ Wo kann zwischen Debug- und Release Version gewählt werden?
 			VSC Linke Seite CMake (Dreieck mit dem Gabelschlüssel) dann oben unter Konfigurieren-> Debug.
@@ -247,16 +247,17 @@ ________________________________________________________________________________
 						buffer_raw.data[i] = (rand()%5000);
 					}
 				
-		- Konzept Source
-			- code aufteilen
-				- 1 File pro Task
-				- Headerfile style und mehrfacheinlesen verhindern
-				- Separates file für globale Variabeln
-				- equalizer unabhängig
-		
+		+ Konzept Source
+			- Code aufteilen
+				+ 1 File pro Task
+				+ Headerfile style und mehrfacheinlesen verhindern
+				+ Separates File für globale Variabeln
+				+ equalizer unabhängig
+					-> Ist bei audio_process_task
+
 		- Speichermanagement
 			- Task stack tiefe analysieren (high water level)
-			- memoryoperationen sicher machen
+			- Memoryoperationen sicher machen
 			- Webserver
 			- Flash platz (für mehr ssids und passwörter)
 			
@@ -265,30 +266,42 @@ ________________________________________________________________________________
 				- debug level festlegen
 			
 		- Features
-			- konsole mit befehlen
+			- Konsole mit Befehlen
+				- eigener Task erstellen
+				- Befehle
+					- update firmware
+					- get stackinfo
+					- get heapinfo
+					- get wifiinfo
+
 			- Akkustandanzeige Aktualisiert automatisch
 			- Sender über Webinterface starten
 			- Lautstärke über Webinterface einstellen
-			- Rauschen für EQ abstimmung
+			- Rauschen für EQ Abstimmung
 			- EQ mit Filterbank für bessere Auflösung bei tiefen Fequenzen
 			- Aktuellen Sender anzeigen
-			- windowing bei EQ für bessere Frequenztrennung
+			- Windowing bei EQ für bessere Frequenztrennung
 			- Wlan Signalstärke anzeigen
 			- Letze ssids und passwörter speichern
 			
 			
 			
 		- Codierstyle festlegen
-			- underline für worttrennung
-			- 
+			- underline für Worttrennung
+			- Geschweifte Klammern immer auf neue Zeile vorne
+			
 		- git konzept
-			- CMakeLists.txt nicht synchronisieren
+			+ CMakeLists.txt nicht synchronisieren
+				- Wird synchronisiert
+				- Apple und Unix werden erkannt und Pfade entsprechend eingestellt.
+
 			- Pro Thema/Feature ein Branch
 			- Pro File arbeitet nur eine Person
-			- pull request wenn feature funktionniert
-			- mergen nach  erfolgreichem review oder test sonst zurückweisen mit kommentar
+			- pull request wenn Feature funktionniert
+			- mergen nach  erfolgreichem Review oder Test sonst zurückweisen mit Kommentar
 			
-		- Einführung digitale Signalverarbeitung
+		+ Einführung digitale Signalverarbeitung
+		- Radio Poti für Senderwahl +/- tauschen
 		- Radio zusammenbauen(löten)
 
 				
