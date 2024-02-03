@@ -1,11 +1,15 @@
 # rppico_webradio<br>Felix Dietrich 2024
 # Project Description: Internet-Based Radio
 
+### 
+Last update February 3, 2024
+
+
 ## Features
 - Internet connection via WLAN
 - Operation using analog rotary knobs, resembling those of an analog radio
 - Storage of 11 MP3 streams through a Web Interface
-- Output power: 3W Class D
+- Output power: 3W Class D mono
 - 10-channel graphic equalizer with real-time feedback
 - Battery status
 - Clear segmentation of signal processing within individual RTOS tasks
@@ -42,15 +46,32 @@
 - Volume Control and station selection
 
 
-## To-Do
+## To-Dos
+- [todo.md](todo.md)
+
 
 ## Images
+- [Breadboard](./images/current/BreadBoard1.jpg)
+- [Breadboard small speaker box](./images/current/BreadBoardSmallSpeakerBox1.jpg)
+- [Drive big speaker box;-)](./images/current/DriveBigSpeaker1.jpg)
+- [PCB](./images/current/PCB1.jpg)
+- [Board installed and wired](./images/current/PCBWired1.jpg)
+- [MP3-Radio front](./images/current/MP3RadioFront1.jpg)
+- [MP3-Radio top](./images/current/MP3RadioTop1.jpg)
+
 
 
 ## The story behind
+
+TBD
+
+## Images
 - [FM-Radio front](./images/history/FMRadioFront.JPG)
+- [FM-Radio rear](./images/history/FMRadioRear.JPG)
+- [FM-Radio inside](./images/history/FMRadioInside.JPG)
 
 
+EOF :-)
 
 
 
