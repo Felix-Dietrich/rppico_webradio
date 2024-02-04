@@ -91,12 +91,12 @@ u16_t ssi_handler(int index, char *pcInsert, int iInsertLen)
 
     if(index >=2 && index <=12)
     {
-        printed = snprintf(pcInsert,iInsertLen, "%s", flash_content_r->sender[index-4]);
+        printed = snprintf(pcInsert,iInsertLen, "%s", flash_content_r->sender[index-2]);
     }
 
     if(index >= 13 && index <=23)
     {
-        printed = snprintf(pcInsert,iInsertLen, "%.1f", flash_content_r->eq[index-15]);
+        printed = snprintf(pcInsert,iInsertLen, "%.1f", flash_content_r->eq[index-13]);
     }
     return printed;
 }
