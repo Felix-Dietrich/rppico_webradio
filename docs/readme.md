@@ -31,7 +31,7 @@ Last update February 3, 2024
 
 ## Schematics and layouts
  - [Schematics and PCB (KiCad)](https://github.com/Felix-Dietrich/rppico_webradio_kicad)
-
+ - [Schematic quick view](./images/current/schematic1.png)
 
 ## Datasheets
 - [RPi Pico Datasheet](https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf)
@@ -41,8 +41,17 @@ Last update February 3, 2024
 - [Class D Amplifier Breakout - MAX98357A](https://www.adafruit.com/product/3006)
 
 ## How it works
+TBD
 - Process diagrams
+- Fetching the mp3 stream
+- The MP3 decoder
+  - Why MP3?
 - The equalizer
+  - Filtertypes
+  - Time vs. frequency domain
+- The I2S Interface
+- Some considerations on timing
+- The Audio amplifier
 - Volume Control and station selection
 
 
@@ -63,12 +72,19 @@ Last update February 3, 2024
 
 ## The story behind
 
-TBD
+TBD<br>
+In the year 2005 2005...<br>
+
+
 
 ## Images
 - [FM-Radio front](./images/history/FMRadioFront.JPG)
 - [FM-Radio rear](./images/history/FMRadioRear.JPG)
 - [FM-Radio inside](./images/history/FMRadioInside.JPG)
+
+
+## FAQ
+- [faq.md](faq.md)
 
 
 EOF :-)
