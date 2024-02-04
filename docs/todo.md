@@ -18,7 +18,17 @@ Memory management
 
 Code
 - [ ] Thread-safe debug output<br>
-- [ ] Set debug level
+  Function ``dbg_print(char *text)`` which pushes the textpointer into a queue.<br>
+  Utilize local buffers and ``snprintf`` to print formatet text into the buffer.<br>
+  This is fast, thread-safe, and scalable.<br>
+  
+- [ ]Function ``set_debug_level(int level)``<br>
+  level = 0 -> No output<br>
+  level = 1 -> Print messages<br>
+  
+	Keep it simple; when there is too much functionality within the function `set_debug_level(int level)`,<br>
+  careful consideration must be given to whether the function needs to be protected by a mutex to ensure thread safety.<br>
+
 
 ### Features
 - [ ] USB Console<br>
