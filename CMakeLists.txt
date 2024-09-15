@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 # Initialize flags
+set(PICO_EXTRAS_FETCH_FROM_GIT OFF)
 set(FELIX OFF)
 set(MANFRED OFF)
 

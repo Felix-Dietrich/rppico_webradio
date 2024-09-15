@@ -3,6 +3,7 @@
 #include <FreeRTOS.h>
 #include <task.h>
 #include <queue.h>
+#include <hardware/clocks.h>
 //#include <semphr.h>
 #include <hardware/gpio.h>
 #include <hardware/vreg.h>
